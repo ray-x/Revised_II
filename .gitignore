@@ -13,7 +13,14 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sdf
+debug/
+release/
+build-RevisedII-Desktop_Qt_5_4_2_MSVC2013_64bit-Debug
 # Windows shortcuts
 *.lnk
 
@@ -42,11 +49,4 @@ Network Trash Folder
 Temporary Items
 .apdisk
 #visual studio
-.sln
-.vcxproj
-.vcxproj.filters
-.vcxproj.user
-.sdf
-debug/
-release/
-build-RevisedII-Desktop_Qt_5_4_2_MSVC2013_64bit-Debug
+

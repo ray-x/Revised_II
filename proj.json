@@ -1,0 +1,10 @@
+{
+	"Game" : "sample_game_name"
+	"PyFiles" : {
+		"options": "options.rpy",
+		"screens": "screens.rpy",
+		"script": "script.rpy"
+	},
+	"Resource" : ["images/bcknd.jpg","noir.png","margo.png"],
+	"Renpy_dir": "C:\projects\elance\renpy\renpy-6.99.4-sdk\renpy.exe"
+}
