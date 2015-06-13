@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/64x64/revised.png</file>
+        <file>images/tmp-scene.png</file>
+        <file>translations/revised_ca.qm</file>
+        <file>translations/revised_es.qm</file>
+        <file>images/copy.png</file>
+        <file>images/cut.png</file>
+        <file>images/delete.png</file>
+        <file>images/filenew.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/paste.png</file>
+        <file>images/save.png</file>
+        <file>images/arrow.png</file>
+        <file>images/editredo.png</file>
+        <file>images/editundo.png</file>
+        <file>images/icon.png</file>
+        <file>images/media-play-32.png</file>
+        <file>images/weather-haze.png</file>
+        <file>images/saveas.png</file>
+    </qresource>
+</RCC>
