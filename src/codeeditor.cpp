@@ -26,7 +26,7 @@ CodeEditor::CodeEditor(QWidget *parent) :  QTextEdit(parent)
 
 
     // TMP, read-only until code editor becomes useful (if ever! xD)
-    this->setReadOnly(true);
+    //this->setReadOnly(true);
 
 
     qDebug() << "CodeEditor created";

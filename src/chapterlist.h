@@ -75,6 +75,7 @@ private:
     QString projectPath;
     QList<Chapter *> chapters;
     int currentChapter;
+	int currentStep;
 };
 
 #endif // CHAPTERLIST_H

@@ -19,6 +19,7 @@
  */
 
 #include "step.h"
+#include"chapter.h"
 
 
 Step::Step(QString line,
@@ -27,10 +28,10 @@ Step::Step(QString line,
 	QObject *parent) : QObject(parent)
 {
 	this->scriptLine = line.trimmed();
-
+	//QTreeWidgetItem *Step::sceneItem;
 	QString treeItemText;
 	QString copiedString;
-	static QTreeWidgetItem * sceneItem = nullptr;
+	//static QTreeWidgetItem * sceneItem = nullptr;
 
 	if (scriptLine.startsWith("label"))
 	{
@@ -200,10 +201,12 @@ Step::Step(QString line,
 	QTreeWidgetItem *childItem;
 	treenode *treeNode;
 	QVariant data;
+	Chapter *chp = dynamic_cast<Chapter*>(parent);
+
 	if (treeItemText.startsWith("Scene"))
 	{
 		sceneItem = new QTreeWidgetItem(treeItem, QStringList(treeItemText));
-		treeNode = new treenode(treeItem, treeItem->childCount(), this);
+		treeNode = new treenode(treeItem, treeItem->childCount(), this,chp->getNumberOfSteps());
 
 		data.setValue(treeNode);
 		sceneItem->setData(0, Qt::UserRole, data);
@@ -214,7 +217,7 @@ Step::Step(QString line,
 	else{
 		childItem = new QTreeWidgetItem(QStringList(treeItemText));
 		if (sceneItem != nullptr){
-			treeNode = new treenode(sceneItem, sceneItem->childCount(), this);
+			treeNode = new treenode(sceneItem, sceneItem->childCount(), this, chp->getNumberOfSteps());
 			data.setValue(treeNode);
 			childItem->setData(0, Qt::UserRole, data);
 			sceneItem->addChild(childItem);
@@ -251,3 +254,4 @@ QStringList Step::getStepParameters()
 {
     return this->parameters;
 }
+QTreeWidgetItem *Step::sceneItem = nullptr;

@@ -35,7 +35,8 @@ Chapter::Chapter(QString scriptFilename,
     scriptFile.open(QIODevice::ReadOnly);
 
     QString scriptLine;
-
+	Step *pstep;
+	pstep->init_step();
     while (!scriptFile.atEnd())
     {
         scriptLine = scriptFile.readLine();
@@ -45,15 +46,11 @@ Chapter::Chapter(QString scriptFilename,
 		if (!scriptLine.trimmed().startsWith("#") && !scriptLine.trimmed().isEmpty())
         {
             // TODO: if line starts with "menu" or "label", read the rest of the block
-
-            addStep(new Step(scriptLine,
-                             this->item,
-                             characterAliases,
-                             this));
+			pstep = new Step(scriptLine, this->item, characterAliases, this);
+			addStep(pstep);
         }
 
     }
-
     scriptFile.close();
 
 

@@ -19,5 +19,6 @@
         <file>images/media-play-32.png</file>
         <file>images/weather-haze.png</file>
         <file>images/saveas.png</file>
+        <file>images/UserIcon.png</file>
     </qresource>
 </RCC>

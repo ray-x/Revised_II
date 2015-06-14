@@ -47,6 +47,10 @@ public:
     void removeCurrentStep();
 
     Step *getStep(int stepNumber);
+	Step *getNextStep();
+	Step *getPrevStep();
+	//Step *currentStep();
+	Step *setCurrentStep(int stepNumber);
     QList<Step *> getAllSteps();
     QString getStepLine(int stepNumber);
     int getNumberOfSteps();
@@ -54,6 +58,7 @@ public:
     QString getScriptFilename();
 
     QTreeWidgetItem* getTreeItem();
+	int currentStep;
 
 signals:
     

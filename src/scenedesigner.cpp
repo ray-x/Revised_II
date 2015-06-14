@@ -42,7 +42,7 @@ SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
 
     nextStepButton = new QPushButton(QIcon::fromTheme("go-next"),
                                tr("&Next"));
-	connect(previousStepButton, SIGNAL(clicked()),
+	connect(nextStepButton, SIGNAL(clicked()),
 		this, SLOT(showNextStep()));
     //nextStepButton->setDisabled(true);// TMP!
     // Next step will be available if you're not on the last one
@@ -331,4 +331,16 @@ void SceneDesigner::renderStep(Step *step)
 void SceneDesigner::deleteCurrentStep()
 {
     this->currentChapter->removeCurrentStep();
+}
+void SceneDesigner::showNextStep()
+{
+	//this->currentChapter->
+	this->currentChapter->currentStep += 1;
+	renderStep(this->currentChapter->getStep(this->currentChapter->currentStep));
+}
+	
+void SceneDesigner::showPrevStep()
+{
+	this->currentChapter->currentStep -= 1;
+	renderStep(this->currentChapter->getStep(this->currentChapter->currentStep));
 }

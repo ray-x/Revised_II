@@ -69,16 +69,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	fileToolBar->addAction(saveAsAct);
 
     editToolBar = addToolBar(tr("Edit"));
-    editToolBar->addAction(cutAct);
-    editToolBar->addAction(copyAct);
-    editToolBar->addAction(pasteAct);
+    //editToolBar->addAction(cutAct);
+    //editToolBar->addAction(copyAct);
+    //editToolBar->addAction(pasteAct);
 
 
     ctlToolBar= addToolBar(tr("Control"));
     ctlToolBar->addAction(exeAct);
-    ctlToolBar->addAction(rollbackAct);
-    ctlToolBar->addAction(backAct);
+    //ctlToolBar->addAction(rollbackAct);
+    //ctlToolBar->addAction(backAct);
     ctlToolBar->addAction(bgAct);
+	ctlToolBar->addAction(characterAct);
 
     mainSplitter = new QSplitter(Qt::Horizontal);
     mainSplitter->setChildrenCollapsible(false);
@@ -177,7 +178,7 @@ void MainWindow::createActions()
                               "selection"));
     connect(pasteAct, SIGNAL(triggered()), this, SLOT(paste()));
 
-    aboutAct = new QAction(tr("&About"), this);
+	aboutAct = new QAction(QIcon("About"),tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -185,25 +186,27 @@ void MainWindow::createActions()
     aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	
-    exeAct = new QAction(QIcon(":/images/media-play-32.png"), tr("execute"), this);
-    exeAct->setStatusTip(tr("Show the Qt library's About box"));
-    connect(exeAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
+    exeAct = new QAction(QIcon(":/images/media-play-32.png"), tr("Run"), this);
+    exeAct->setStatusTip(tr("Run Renpy with give settings"));
+	connect(exeAct, SIGNAL(triggered()), this, SLOT(runProject()));
+	
     rollbackAct = new QAction(QIcon(":/images/editundo.png"), tr("rollback"), this);
-    rollbackAct->setStatusTip(tr("Show the Qt library's About box"));
-    connect(exeAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    rollbackAct->setStatusTip(tr("Going forward"));
+    connect(rollbackAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
     backAct = new QAction(QIcon(":/images/arrow.png"), tr("back"), this);
-    backAct->setStatusTip(tr("Show the Qt library's About box"));
-    connect(exeAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    backAct->setStatusTip(tr("Going back"));
+    connect(backAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
     bgAct = new QAction(QIcon(":/images/icon.png"), tr("background"), this);
     bgAct->setStatusTip(tr("Show the Qt library's About box"));
-    connect(exeAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	connect(bgAct, SIGNAL(triggered()), imageManager, SLOT(showSetBackground()));
+	//connect(projectDefineImages, SIGNAL(triggered()),imageManager, SLOT(showForEditing()));
 
 
-
-
+	characterAct = new QAction(QIcon(":/images/UserIcon.png"), tr("&Character"), this);
+	characterAct->setStatusTip(tr("Show the application's About box"));
+	connect(characterAct, SIGNAL(triggered()),	characterManager, SLOT(show()));
 
     cutAct->setEnabled(false);
     copyAct->setEnabled(false);
@@ -421,7 +424,7 @@ void MainWindow::loadSettings()
 
     //this->resize(settings.value("mainWindowSize", QSize(1024, 768)).toSize());
     this->mainSplitter->restoreState(settings.value("mainSplitterState").toByteArray());
-	/*
+	
     renpyExecutable = settings.value("renpyExecutable",
                                      "/usr/games/renpy").toString();
 
@@ -436,7 +439,7 @@ void MainWindow::loadSettings()
     projectsFolder = settings.value("projectsFolder",
                                     defaultProjectsFolder).toString();
 
-	*/
+	
 	recentlyOpenedFiles = settings.value("recentlyOpenedFiles",
 		QStringList()).toStringList();
     qDebug() << "Settings loaded";
@@ -512,7 +515,7 @@ void MainWindow::enableMenusAndWidgets(bool state)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    this->projectmgr->saveSettings(this);
+    //this->projectmgr->saveSettings(this);
 	saveSettings();
     event->accept();
 
@@ -752,8 +755,8 @@ void MainWindow::runProject()
     }
 
     QStringList renpyParameters;
-    renpyParameters.append("--game=" + this->projectPath);
-
+    renpyParameters.append( this->projectPath);
+	qDebug() << "running" << renpyExecutable << " " << renpyParameters;
     int errorCode;
     errorCode = QProcess::execute(renpyExecutable, renpyParameters);
 

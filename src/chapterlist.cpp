@@ -147,7 +147,8 @@ void ChapterList::setContents(QString path, QStringList fileList)
     qDebug() << "Project's chapters:";
     foreach (Chapter *chapter, chapters)
     {
-        for (int counter = 0; counter < chapter->getNumberOfSteps(); ++counter)
+		int st = chapter->getNumberOfSteps();
+        for (int counter = 0; counter < st; ++counter)
         {
             Step *step = chapter->getStep(counter);
             qDebug() << step->getScriptLine();
@@ -236,15 +237,11 @@ void ChapterList::loadChapter(QTreeWidgetItem *item, int column)
 
         //////////////////////
         // quite TMP, for tests
-        //int stepNum = item->data(0, Qt::UserRole).toInt();
-		/*treenode it(nullptr, 1, nullptr);
-		QVariant v = QVariant::fromValue(it);
-		treenode vClass2 = v.value<treenode>();
-		qDebug() << vClass2.nthInParent;*/
 		QVariant  v = item->data(0, Qt::UserRole);
 		treenode *vnode = v.value<treenode*>();
-		Step *stepSel = vnode->step;
-        qDebug() << "ChapterList::loadChapter() stepscript" << stepSel->getScriptLine();
+		Step *stepSel = vnode->step; 
+		currentStep = vnode->stepNum;
+		qDebug() << "ChapterList::loadChapter() stepscript" << stepSel->getScriptLine() << "at step" << currentStep;
 		int selectedChapter;
 		if(item->parent()->text(0).startsWith("Scene"))
 			selectedChapter = item->parent()->parent()->data(0, Qt::UserRole).toInt();
@@ -256,10 +253,12 @@ void ChapterList::loadChapter(QTreeWidgetItem *item, int column)
             currentChapter = selectedChapter;
             emit chapterChanged(chapters.at(currentChapter - 1)); // -1, since they're stored from 1
         }
+		chapters.at(currentChapter - 1)->currentStep = currentStep;
 		//Step *selectStep = chapters.at(currentChapter - 1)->getStep(stepNum);
 		emit stepRenderRequest(stepSel);
-        qDebug() << "currentChapter:" << currentChapter;
+		qDebug() << "currentChapter:" << currentChapter << "current step" << currentStep;
         //qDebug() << this->chapters.at(currentChapter - 1)->getStepLine(stepNum);
+		
     }
 
 }

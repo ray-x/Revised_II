@@ -67,11 +67,11 @@ public:
 		QObject *parent = 0) ;
     ~Step();
 
-
+	static void init_step(){ sceneItem = nullptr; };
     QString getScriptLine();
     StepType getStepType();
     QStringList getStepParameters();
-	//QTreeWidgetItem *sceneItem;
+	static QTreeWidgetItem *sceneItem;
 
 signals:
     
@@ -84,7 +84,7 @@ private:
 
     StepType type;
     QStringList parameters;
-    
+	//QTreeWidgetItem * sceneItem = nullptr;
 };
 
 class treenode{
@@ -92,10 +92,15 @@ public:
 	QTreeWidgetItem *parent;
 	int nthInParent;
 	Step *step;
-	//int stepNum;
-	treenode(QTreeWidgetItem *p, int th, Step *st) :parent(p), nthInParent(th), step(st){};
+	int stepNum;
+	treenode(QTreeWidgetItem *p, int th, Step *st, int sp) :parent(p), nthInParent(th), step(st),stepNum(sp){};
 	treenode():parent(nullptr),nthInParent(0),step(0){};
 };
+
+
+//QTreeWidgetItem *Step::sceneItem;
+//
+//Student* Student::m_head = NULL;
 Q_DECLARE_METATYPE(treenode);
 Q_DECLARE_METATYPE(treenode*);
 #endif // STEP_H

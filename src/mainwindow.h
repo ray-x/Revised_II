@@ -189,6 +189,7 @@ private:
     QAction *rollbackAct;
     QAction *backAct;
     QAction *bgAct;
+	QAction *characterAct;
     // Add end
 
     // Configuration window

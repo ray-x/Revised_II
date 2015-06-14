@@ -1,3 +1,7 @@
+/*
+Ray: move the file control logic from mainwindows
+*/
+
 #include "projectmgr.h"
 #include <vector>
 #include <QFile>
@@ -95,19 +99,23 @@ bool ProjectMgr::loadSettings(MainWindow *win)
 
 bool ProjectMgr::saveSettings(MainWindow *win)
 {
-	QSettings settings(projectfile, QSettings::IniFormat);
-	qDebug() << "error code" << settings.status() << endl;
-	if (1){
-		settings.setValue("mainWindowSize", win->size());
-		settings.setValue("mainSplitterState", win->mainSplitter->saveState());
+	if (projectfile!=nullptr&&projectfile.size() >= 2 && QFileInfo(projectfile).exists())
+	{
+		QSettings settings(projectfile, QSettings::IniFormat);
+		qDebug() << "error code" << settings.status() << endl;
+		if (1){
+			settings.setValue("mainWindowSize", win->size());
+			settings.setValue("mainSplitterState", win->mainSplitter->saveState());
 
-		settings.setValue("renpyExecutable", win->renpyExecutable);
-		settings.setValue("projectsFolder", win->projectsFolder);
+			settings.setValue("renpyExecutable", win->renpyExecutable);
+			settings.setValue("projectsFolder", win->projectsFolder);
 
-		//settings.setValue("recentlyOpenedFiles", win->recentlyOpenedFiles);
-		qDebug() << "Settings saved";
-		return true;
+			//settings.setValue("recentlyOpenedFiles", win->recentlyOpenedFiles);
+			qDebug() << "Settings saved";
+			return true;
+		}
 	}
+
 
 	return false;
 }
