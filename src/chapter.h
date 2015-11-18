@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,13 +39,18 @@ class Chapter : public QObject
 
 public:
     explicit Chapter(QString scriptFilename,
-                     QTreeWidgetItem *treeItem,
-                     CharacterManager *mwCharacterManager,
-                     QObject *parent = 0);
+        QTreeWidgetItem *treeItem,
+        CharacterManager *mwCharacterManager,
+        QObject *parent = 0) ;
     ~Chapter();
 
     void addStep(Step *step);
+    void insertStep(Step *step);
+    void addStep(QString *step);
+    void removeStepAt(Step *step);
     void removeCurrentStep();
+
+    Step *curSceneStep;
 
     Step *getStep(int stepNumber);
 	Step *getNextStep();
@@ -59,6 +65,7 @@ public:
 
     QTreeWidgetItem* getTreeItem();
 	int currentStep;
+    void RemoveStepAt(int);
 
 signals:
     

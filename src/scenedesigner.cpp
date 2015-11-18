@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,17 +21,25 @@
 
 #include "scenedesigner.h"
 
-SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
-                             ImageManager *mwImageManager,
-                             QWidget *parent) :  QWidget(parent)
+SceneDesigner::SceneDesigner(
+    ChapterList *mwChapterList,
+    CharacterManager *mwCharacterManager,
+    ImageManager *mwImageManager,
+    AudioManagerForm *mwAudioManager,
+    VideoManager *mwVideoManager,
+    TimerForm *mwtimerForm,
+    QWidget *parent) : QWidget(parent), chapList(mwChapterList)
 {
     this->characterManager = mwCharacterManager;
     this->imageManager = mwImageManager;
-
+    this->audioManager = mwAudioManager;
+    this->videoManager = mwVideoManager;
+    this->timerForm = mwtimerForm;
+    //this->videoManager=mwVideoManger;
 
     scenePreviewer = new ScenePreviewer();
 
-    choiceMenuEditor = new ChoiceMenuEditor();
+    choiceMenuEditor = new ChoiceMenuEditorForm();
 
 
     previousStepButton = new QPushButton(QIcon::fromTheme("go-previous"),
@@ -62,7 +71,7 @@ SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
     insertMenuButton->setStatusTip(tr("Insert a menu with several choices. "
                                       "Each choice will go to a different part of the game"));
     connect(insertMenuButton, SIGNAL(clicked()),
-            choiceMenuEditor, SLOT(showForNewMenu()));
+        choiceMenuEditor, SLOT(show()));
 
 
     setBackgroundButton = new QPushButton(QIcon::fromTheme("insert-image"),
@@ -73,7 +82,24 @@ SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
     connect(imageManager, SIGNAL(backgroundSelected(QString,QString)),
             this, SLOT(addBackgroundStep(QString,QString)));
 
-    insertImageButton = new QPushButton(QIcon::fromTheme("folder-image-people"),
+    connect(imageManager, SIGNAL(imageInsert(QString, QString, QString, QString)),
+        this, SLOT(addImageStep(QString, QString, QString, QString)));
+    connect(imageManager, SIGNAL(imageInsert(QString)),
+        this, SLOT(addImageStep(QString)));
+    connect(imageManager, SIGNAL(imageInsert(QStringList)),
+        this, SLOT(addImageStep(QStringList)));
+    connect(audioManager, SIGNAL(sigInsertAudioStep(QString)),
+        this, SLOT(addAudioStep(QString)));
+    connect(choiceMenuEditor, SIGNAL(sigInsertMenuStep(QStringList)),
+        this, SLOT(addMenuStep(QStringList)));
+
+    connect(videoManager, SIGNAL(sigInsertVideoStep(QStringList)),
+        this, SLOT(addVideoStep(QStringList)));
+
+    connect(timerForm, SIGNAL(sigInsertTimerStep(QStringList)),
+        this, SLOT(addTimerStep(QStringList)));
+
+	insertImageButton = new QPushButton(QIcon::fromTheme("folder-image-people"),
                                       tr("Insert &Image..."));
     connect(insertImageButton, SIGNAL(clicked()),
             imageManager, SLOT(showInsertImage()));
@@ -81,6 +107,8 @@ SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
     connect(imageManager, SIGNAL(imageSelected(QString,QString,QString)),
             this, SLOT(addImageStep(QString,QString,QString)));
 
+    connect(audioManager, SIGNAL(addAudioStep(QString)),
+        this, SLOT(addAudioStep(QString)));
 
     characterComboBox = new CharacterComboBox();
     characterComboBox->populate();
@@ -98,7 +126,7 @@ SceneDesigner::SceneDesigner(CharacterManager *mwCharacterManager,
             this, SLOT(addDialogStep()));
 
     acceptTextButton = new QPushButton(QIcon::fromTheme("insert-text"),
-                                       tr("Insert &Text"));
+                                       tr("Insert &Text Step"));
     connect(acceptTextButton, SIGNAL(clicked()),
             this, SLOT(addDialogStep()));
 
@@ -157,6 +185,7 @@ void SceneDesigner::clear()
 void SceneDesigner::loadChapter(Chapter *chapter)
 {
     this->currentChapter = chapter;
+    this->imageManager->currentChapter = chapter;
 
     qDebug() << "SceneDesigner loading chapter" << chapter->getScriptFilename();
 }
@@ -175,10 +204,12 @@ void SceneDesigner::addBackgroundStep(QString imageRef, QString filename)
     line.append("scene  ");
     line.append(imageRef);
     line.append("\n");
-
-    this->currentChapter->addStep(new Step(line,
+    //Step(QString line, QTreeWidgetItem *currSceneItem, Step *step, QStringList characterAliases, QObject *parent);
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    this->currentChapter->insertStep(new Step(line,
                                            currentChapter->getTreeItem(),
-                                           QStringList(),  // not needed
+                                           curstep,
+                                           QStringList(),
                                            currentChapter));
 
 
@@ -193,27 +224,139 @@ void SceneDesigner::addBackgroundStep(QString imageRef, QString filename)
  *          show regular image reference
  */
 void SceneDesigner::addImageStep(QString imageRef,
+                                 QString cmd,
                                  QString alignment,
                                  QString filename)
 {
     QString line = "    "; // Always start with 4-char indentation
-    line.append("show  ");
-    line.append(imageRef);
-    line.append(" at ");
-    line.append(alignment);
-    line.append("\n");
 
-    this->currentChapter->addStep(new Step(line,
-                                           currentChapter->getTreeItem(),
-                                           QStringList(), // not needed
+    line = line.append(cmd +" "+ imageRef +" "+ alignment);
+    qDebug() << line;
+
+
+
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    this->currentChapter->insertStep(new Step(line,
+                                           currentChapter->getTreeItem(), //scene
+                                           curstep,                     //stepnum
+                                           QStringList(),
                                            currentChapter));
 
 
     this->scenePreviewer->addOtherImage(filename, alignment);
+    imageManager->close();
+    
 }
 
 
 
+void SceneDesigner::addImageStep(QString command)
+{
+    QString line = "    "; // Always start with 4-char indentation
+
+    line = line.append(command);
+    qDebug() << line;
+    
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    this->currentChapter->insertStep(new Step(line,
+        currentChapter->getTreeItem(), //scene
+        curstep,                     //stepnum
+        QStringList(),
+        currentChapter));
+
+    imageManager->close();
+
+}
+void SceneDesigner::addImageStep(QStringList commands)
+{
+    //QString line = "    "; // Always start with 4-char indentation
+
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+
+    for (auto step : commands)
+    {
+        this->currentChapter->insertStep(new Step(step,
+            currentChapter->getTreeItem(), curstep,
+            QStringList(), // not needed
+            currentChapter));
+        curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    }
+    //videoManager->close();
+
+    imageManager->close();
+
+}
+
+
+void SceneDesigner::addMenuStep(QStringList commands)
+{
+    //QString line = "    "; // Always start with 4-char indentation
+
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+
+    for (auto step : commands)
+    {
+        this->currentChapter->insertStep(new Step(step,
+            currentChapter->getTreeItem(), curstep,
+            QStringList(), // not needed
+            currentChapter));
+        curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    }
+    //videoManager->close();
+
+    imageManager->close();
+
+}
+
+
+
+//*begin with audio first
+
+void SceneDesigner::addAudioStep(QString audiostep)
+{
+
+    qDebug() << audiostep;
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+
+    this->currentChapter->insertStep(new Step(audiostep, 
+        currentChapter->getTreeItem(), curstep,
+        QStringList(), // not needed
+        currentChapter));
+    //this->scenePreviewer->addOtherImage(filename, alignment);
+    audioManager->close();
+
+}
+
+void SceneDesigner::addVideoStep(QStringList videostep)
+{
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+
+   for (auto step : videostep)
+    {
+        this->currentChapter->insertStep(new Step(step,
+            currentChapter->getTreeItem(), curstep,
+            QStringList(), // not needed
+            currentChapter));
+        curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    }
+    videoManager->close();
+}
+
+void SceneDesigner::addTimerStep(QStringList steps)
+{
+    Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+
+    for (auto step : steps)
+    {
+        this->currentChapter->insertStep(new Step(step,
+            currentChapter->getTreeItem(), curstep,
+            QStringList(), // not needed
+            currentChapter));
+        qDebug() << step;
+        curstep = currentChapter->getAllSteps().at(currentChapter->currentStep++);
+    }
+    videoManager->close();
+}
 
 void SceneDesigner::addDialogStep()
 {
@@ -231,6 +374,7 @@ void SceneDesigner::addDialogStep()
 
 
     int selectedCharacter = this->characterComboBox->currentIndex();
+    QString strSelectedItem = this->characterComboBox->currentText();
 
     // if "Add New Character" is selected (shouldn't happen)
     if (selectedCharacter == this->characterComboBox->count())
@@ -239,7 +383,7 @@ void SceneDesigner::addDialogStep()
         selectedCharacter = 0;
     }
 
-    if (selectedCharacter != 0) // If NOT narrator
+    if (selectedCharacter != 0 && strSelectedItem!=" Add New Label: ") // If NOT narrator
     {
         // Get character's alias from combobox item data
         QStringList characterData = characterComboBox->itemData(selectedCharacter,
@@ -251,14 +395,20 @@ void SceneDesigner::addDialogStep()
         name = characterComboBox->currentText();
         color = characterData.at(1);
     }
+    if (strSelectedItem == " Add New Label: ")
+    {
+        line.append("Label:    ");  // alias
+
+    }
 
     line.append(QString("\"%1\"\n").arg(this->textLine->text()));
-
-
-    this->currentChapter->addStep(new Step(line,
+ 
+    Step *curstep=currentChapter->getAllSteps().at(currentChapter->currentStep);
+    this->currentChapter->insertStep(new Step(line,
                                            currentChapter->getTreeItem(),
+                                           curstep,
                                            characterManager->getAllAliases(),
-                                           currentChapter));
+                                           this->currentChapter));
 
     this->scenePreviewer->setDialogText(name,
                                         color,
@@ -336,11 +486,17 @@ void SceneDesigner::showNextStep()
 {
 	//this->currentChapter->
 	this->currentChapter->currentStep += 1;
+    if (this->currentChapter->currentStep >= this->currentChapter->getNumberOfSteps())
+        this->currentChapter->currentStep = this->currentChapter->getNumberOfSteps() - 1;
+
 	renderStep(this->currentChapter->getStep(this->currentChapter->currentStep));
 }
 	
 void SceneDesigner::showPrevStep()
 {
 	this->currentChapter->currentStep -= 1;
+    if (this->currentChapter->currentStep < 0)
+        this->currentChapter->currentStep = 0;
+
 	renderStep(this->currentChapter->getStep(this->currentChapter->currentStep));
 }

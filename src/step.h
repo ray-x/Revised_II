@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com> 
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,13 +25,13 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QTreeWidgetItem>
-
+#include <QTreeWidget>
 #include <QDebug>
 
 
 
-enum StepType { labelStep,
+enum StepType { comments,
+                labelStep,
                 menuStep,
                 jumpStep,
                 returnStep,
@@ -62,17 +63,20 @@ class Step : public QObject
 
 public:
 	explicit Step(QString line,
-		QTreeWidgetItem *treeItem,
+		QTreeWidgetItem *treeParItem,
+        QTreeWidgetItem *treeSceneItem,
 		QStringList characterAliases,
-		QObject *parent = 0) ;
+		QObject *parent) ;
+
+    explicit Step(QString line, QTreeWidgetItem *currSceneItem, Step *step, QStringList characterAliases, QObject *parent);
     ~Step();
 
-	static void init_step(){ sceneItem = nullptr; };
+	//void init_step(){ sceneItem = nullptr; };
     QString getScriptLine();
     StepType getStepType();
     QStringList getStepParameters();
-	static QTreeWidgetItem *sceneItem;
-
+	QTreeWidgetItem *sceneItem; //father
+    QTreeWidgetItem *selfTreeItem;
 signals:
     
 public slots:
@@ -90,10 +94,12 @@ private:
 class treenode{
 public:
 	QTreeWidgetItem *parent;
+    QTreeWidgetItem *currentItem;
 	int nthInParent;
 	Step *step;
 	int stepNum;
-	treenode(QTreeWidgetItem *p, int th, Step *st, int sp) :parent(p), nthInParent(th), step(st),stepNum(sp){};
+    int stepNumInScene;
+    treenode(QTreeWidgetItem *p, int th, Step* s, int sp, int sp2 = 0) :parent(p), nthInParent(th), step(s), stepNum(sp), stepNumInScene(sp2){};
 	treenode():parent(nullptr),nthInParent(0),step(0){};
 };
 

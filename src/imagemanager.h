@@ -37,10 +37,13 @@
 #include <QSettings>
 
 #include <QDebug>
+#include "CharacterManager.h"
+#include "chapter.h"
+#include "ui_ImageManager.h"
 
-
-class ImageManager : public QWidget
+class ImageManager : public QWidget, public Ui::ImageManagerForm
 {
+    friend class SceneDesigner;
     Q_OBJECT
 
 public:
@@ -54,7 +57,9 @@ public:
 
     QString getFilenameFromRef(QString ref);
 
-    void insertImage(QString alignment);
+    void insertImage(QString options);
+    QStringList effects; 
+    QStringList ATLs;
 
 
 signals:
@@ -63,6 +68,14 @@ signals:
     void imageSelected(QString imageRef,
                        QString alignment,
                        QString filename);
+    void imageInsert(QString imageRef,
+        QString filename,
+        QString cmd,
+        QString option);
+    void imageInsert(QString imageRef);
+    void imageInsert(QStringList cmds);
+    //call addImage(QString imageref, QString filename, QString cmd, QString option)
+    void imageInsertWithOptions(QString imageref, QString filename, QString cmd, QString option);
 
     
 public slots:
@@ -70,6 +83,7 @@ public slots:
     void removeImageFromList();
 
     void addAnotherImage();
+    void addScaledImage();
 
     void clear();
 
@@ -81,13 +95,16 @@ public slots:
     void insertImageLeft();
     void insertImageCenter();
     void insertImageRight();
-
-
+	void insertImage();
+	void generateScript();
+	void hideImage();
+    //void addImage(QString imageref, QString dir, QString cmd, QString option);
 protected:
     virtual void closeEvent(QCloseEvent *event);
 
 
 private:
+#if 0
     QHBoxLayout *mainLayout;
 
     QGroupBox * imageListGroupbox;
@@ -111,12 +128,14 @@ private:
     QPushButton *insertImageButtonLeft;
     QPushButton *insertImageButtonCenter;
     QPushButton *insertImageButtonRight;
-
+#endif
 
     QAction *closeAction;
 
     QString rpyFilename;
     QString projectPath;
+    CharacterManager *characterManager;
+    Chapter *currentChapter;
 };
 
 #endif // IMAGEMANAGER_H

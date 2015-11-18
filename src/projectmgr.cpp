@@ -1,6 +1,22 @@
 /*
-Ray: move the file control logic from mainwindows
-*/
+ *   This file is part of Revised, a visual editor for Ren'Py
+ *   Copy right: 2014-2015 Ray <ray.cn@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .
+ */
 
 #include "projectmgr.h"
 #include <vector>
@@ -218,7 +234,8 @@ bool ProjectMgr::loadProjectFiles(MainWindow *win)
 
 		// Load the image definitions file (second script) in the ImageManager
 		win->imageManager->loadImagesFromRpyFile(win->fileList.at(1));  // FIXME, ensure correct file, etc
-
+        win->audioManager->loadAudioFromDir(win->projectPath);
+        win->videoManager->loadVideoFromDir(win->projectPath);
 
 		// Load the chapter list, and the third script (first chapter) file
 		win->chapterList->setContents(win->projectPath, win->fileList);
@@ -252,7 +269,7 @@ static bool copyRecursively(const QString &srcFilePath,
 		QDir targetDir(tgtFilePath);
 		targetDir.cdUp();
 		qDebug() <<"MakeDIR: " <<QFileInfo(tgtFilePath).fileName();
-		if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
+        if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()) && !targetDir.exists())
 			return false;
 		QDir sourceDir(srcFilePath);
 		QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
@@ -288,5 +305,6 @@ bool ProjectMgr::CopyProj(MainWindow *win, QString NewProjFolder)
 
 	copyRecursively(sourcedir, destDir);
 	QString destdir = NewProjFolder;
+    //QFile projectf(destDir + "/"+projectfile);
 
 }

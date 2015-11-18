@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

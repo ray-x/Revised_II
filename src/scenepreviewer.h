@@ -26,7 +26,7 @@
 #include <QPaintEvent>
 
 #include <QDebug>
-
+#include "gameobject.h"
 
 class ScenePreviewer : public QWidget
 {
@@ -42,12 +42,18 @@ public:
 
 
     void clear();
+    void paintObject(QPainter & paintDevice);
+    void drawSelection(QPainter& painter, GameObject* object);
 
 signals:
 
 protected:
     virtual void paintEvent(QPaintEvent *event);
-    
+    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent *);
+    GameObject *selectedObject();
+    GameObject* objectAt(qreal x, qreal y);
 public slots:
 
 
@@ -61,7 +67,19 @@ private:
     QString dialogText;
 
     QFont dialogTextFont;
+    bool mMousePressed;
+    bool mResizing;
+    bool mCanResize;
+    bool mMoving;
+    bool mCanMove;
+    GameObject* mObject;
+protected:
+//    void paintEvent(QPaintEvent*);
 
+    //void resizeEvent(QResizeEvent *);
+
+
+    void adjustSize();
 };
 
 #endif // SCENEPREVIEWER_H

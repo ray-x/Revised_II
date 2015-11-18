@@ -20,5 +20,8 @@
         <file>images/weather-haze.png</file>
         <file>images/saveas.png</file>
         <file>images/UserIcon.png</file>
+        <file>images/Music-icon.png</file>
+        <file>images/video-icon.png</file>
+        <file>images/timer_512.png</file>
     </qresource>
 </RCC>

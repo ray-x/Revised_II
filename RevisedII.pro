@@ -28,7 +28,11 @@ SOURCES += \
     src/scenedesigner.cpp \
     src/scenepreviewer.cpp \
     src/step.cpp \
-    src/scenemgr.cpp
+    src/videomanager.cpp \
+    src/audiomanagerform.cpp \
+    src/timerform.cpp \
+    src/gameobject.cpp \
+    src/choicemenueditorform.cpp
 
 HEADERS  += \
     src/chapter.h \
@@ -45,7 +49,11 @@ HEADERS  += \
     src/scenedesigner.h \
     src/scenepreviewer.h \
     src/step.h \
-    src/scenemgr.h
+    src/videomanager.h \
+    src/audiomanagerform.h \
+    src/timerform.h \
+    src/gameobject.h \
+    src/choicemenueditorform.h
 
 #FORMS    += mainwindow.ui
 
@@ -61,3 +69,10 @@ DISTFILES += \
 
 
 CONFIG += console
+
+FORMS += \
+    src/ImageManager.ui \
+    src/videomanager.ui \
+    src/audiomanagerform.ui \
+    src/timerform.ui \
+    src/choicemenueditorform.ui

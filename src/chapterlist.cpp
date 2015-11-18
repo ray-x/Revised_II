@@ -1,7 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
- *
+ *             2015-2015  Ray <RayX.cn@gmail.com>
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .
  */
-
+#include <QTextCodec>
 #include "chapterlist.h"
 #include "step.h"
 ChapterList::ChapterList(CharacterManager *mwCharacterManager,
-                         QWidget *parent) : QWidget(parent)
+    QWidget *parent) : QWidget(parent), currentItem(nullptr)
 {
     this->characterManager = mwCharacterManager;
 
@@ -37,6 +37,8 @@ ChapterList::ChapterList(CharacterManager *mwCharacterManager,
 
     connect(treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)),
             this, SLOT(loadChapter(QTreeWidgetItem*,int)));
+    connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem * , int )),
+        this, SLOT(loadChapter(QTreeWidgetItem*, int)));
 
     treeWidget->setStatusTip(tr("List of chapters in your game, with their steps"));
 
@@ -58,10 +60,34 @@ ChapterList::ChapterList(CharacterManager *mwCharacterManager,
 
     // TMP, some tests
     treeWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-    treeWidget->addAction(new QAction("Add Chapter", treeWidget));
-    treeWidget->addAction(new QAction("Remove Chapter", treeWidget));
-    treeWidget->addAction(new QAction(QIcon::fromTheme("list-remove"),
-                                "Remove Step", treeWidget));
+    pAddChapter = new QAction(QIcon::fromTheme("list-remove"),
+        "Remove Chapter", treeWidget);
+    treeWidget->addAction(pAddChapter);
+    pRemoveChapter = new QAction("Remove Chapter", treeWidget);
+    treeWidget->addAction(pRemoveChapter);
+    
+    
+    pRemoveStep = new QAction(QIcon::fromTheme("list-remove"),
+        "Remove Step", treeWidget);
+    treeWidget->addAction(pRemoveStep);
+    pCopyStep = new QAction(QIcon::fromTheme("list-remove"),
+        "Copy Step", treeWidget);
+    treeWidget->addAction(pCopyStep);
+    pInsertCopiedStep = new QAction(QIcon::fromTheme("list-remove"),
+        "Insert Copied Step", treeWidget);
+    treeWidget->addAction(pInsertCopiedStep);
+
+    connect(pAddChapter, SIGNAL(triggered()),
+        this, SLOT(addChapter()));
+    connect(pRemoveChapter, SIGNAL(triggered()),
+        this, SLOT(removeChapter()));
+    
+    connect(pRemoveStep, SIGNAL(triggered()),
+        this, SLOT(RemoveStep()));
+    connect(pCopyStep, SIGNAL(triggered()),
+        this, SLOT(CopyStep()));
+    connect(pInsertCopiedStep, SIGNAL(triggered()),
+        this, SLOT(InsertCopiedStep()));
 
 
     // Layout
@@ -71,15 +97,57 @@ ChapterList::ChapterList(CharacterManager *mwCharacterManager,
     mainLayout->addWidget(addChapterButton);
     mainLayout->addWidget(removeChapterButton);
     this->setLayout(mainLayout);
-
+    stepCopied = false;
 
     qDebug() << "ChapterList created";
 }
 
+void ChapterList::InsertCopiedStep()
+{
+    Chapter * Chapter = chapters.at(currentChapter - 1);
+    Step *curstep = Chapter->getAllSteps().at(Chapter->currentStep);
 
+    //Step *curstep = currentChapter->getAllSteps().at(currentChapter->currentStep);
+    
+    Chapter->insertStep(new Step(*copiedStepLine,
+        Chapter->getTreeItem(), 
+        curstep->selfTreeItem, 
+        characterManager->getAllAliases(),
+        Chapter));
+
+
+    stepCopied = false;
+    qDebug() << "insert step copied";
+}
+void ChapterList::CopyStep()
+{
+    Chapter * Chapter = chapters.at(currentChapter - 1);
+    Step *curstep = Chapter->getAllSteps().at(Chapter->currentStep);
+    copiedStepLine = new QString(curstep->getScriptLine());
+    stepCopied = true;
+    qDebug() << "step copied" << copiedStepLine;
+}
+void ChapterList::RemoveStep()
+{
+    Chapter * Chapter = chapters.at(currentChapter - 1);
+
+    if (nullptr == stepsel)
+        return;
+    treeWidget->removeItemWidget(stepsel->selfTreeItem, 0);
+    delete(stepsel->selfTreeItem);
+    Chapter->removeStepAt(stepsel);
+    Chapter->currentStep--;
+    //int index= treeWidget->indexOfTopLevelItem(curstep->selfTreeItem);
+    //treeWidget->takeTopLevelItem(index);
+    qDebug() << "step removed";
+}
 
 ChapterList::~ChapterList()
 {
+    delete(pRemoveStep);
+    delete(pCopyStep);
+    delete(pInsertCopiedStep);
+
     qDebug() << "ChapterList destroyed";
 }
 
@@ -174,6 +242,7 @@ void ChapterList::saveContentsToRpyFile()
 
         foreach (Step *step, chapter->getAllSteps())
         {
+            qDebug() << step->getScriptLine();
             switch (step->getStepType())
             {
             case labelStep:
@@ -187,10 +256,12 @@ void ChapterList::saveContentsToRpyFile()
 
             rpyFileContents.append(step->getScriptLine());
             rpyFileContents.append("\n");
+
         }
 
         rpyFileContents.append(QString("\n## End of chapter %1\n").arg(chapterNumber));
 
+        QTextCodec *code = QTextCodec::codecForName("utf8");
         QFile rpyFile(chapter->getScriptFilename());
         rpyFile.open(QIODevice::WriteOnly);
         rpyFile.write(rpyFileContents.toLocal8Bit());
@@ -208,10 +279,11 @@ void ChapterList::loadChapter(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column)
 
-    ////////// TODO: Clean up this mess of tests!
+        ////////// TODO: Clean up this mess of tests!
 
 
-    // If a chapter (not a step) was selected
+        // If a chapter (not a step) was selected
+    currentItem = item;
     if (item->parent() == NULL)
     {
         int selectedChapter = item->data(0, Qt::UserRole).toInt();
@@ -234,33 +306,34 @@ void ChapterList::loadChapter(QTreeWidgetItem *item, int column)
     else  // Selected a step, not a chapter
     {
         this->removeChapterButton->setDisabled(true); // disable button to remove
-
         //////////////////////
         // quite TMP, for tests
 		QVariant  v = item->data(0, Qt::UserRole);
 		treenode *vnode = v.value<treenode*>();
-		Step *stepSel = vnode->step; 
+        stepsel = vnode->step;
 		currentStep = vnode->stepNum;
-		qDebug() << "ChapterList::loadChapter() stepscript" << stepSel->getScriptLine() << "at step" << currentStep;
+        //currentItem = stepSel->selfTreeItem;
+        qDebug() << "ChapterList::loadChapter() stepscript" << stepsel->getScriptLine() << "at step" << currentStep;
 		int selectedChapter;
 		if(item->parent()->text(0).startsWith("Scene"))
 			selectedChapter = item->parent()->parent()->data(0, Qt::UserRole).toInt();
 		else
 			selectedChapter = item->parent()->data(0, Qt::UserRole).toInt();
-      
+        if (selectedChapter < 1)
+            return;
         if (selectedChapter != currentChapter)
         {
             currentChapter = selectedChapter;
             emit chapterChanged(chapters.at(currentChapter - 1)); // -1, since they're stored from 1
         }
 		chapters.at(currentChapter - 1)->currentStep = currentStep;
+
 		//Step *selectStep = chapters.at(currentChapter - 1)->getStep(stepNum);
-		emit stepRenderRequest(stepSel);
+        emit stepRenderRequest(stepsel);
 		qDebug() << "currentChapter:" << currentChapter << "current step" << currentStep;
         //qDebug() << this->chapters.at(currentChapter - 1)->getStepLine(stepNum);
 		
     }
-
 }
 
 

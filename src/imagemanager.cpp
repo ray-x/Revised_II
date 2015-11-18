@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +23,15 @@
 
 ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
 {
+	this->setWindowFlags(Qt::Dialog);
+	this->setWindowModality(Qt::WindowModal);
+	this->setupUi(this); 
+    effects = { "None", "fade", "dissolve", "pixellate", "move", "moveinright", "moveoutright", "ease", \
+        "zoomin", "zoomout", "zoominout", "vpunch", "hpunch", "blinds", "squares", "wipeleft", "slideleft", "slideawayleft", "irisin" };
+
+    ATLs = { "None", "pause", "linear", "ease", "easein", "pos", "xpos", "ypos", "anchor", "xanchor", "yanchor", "align", "xalign", \
+        "yalign", "xoffset", "yoffset", "xcenter", "ycenter", "rotate", "rotate_pad", "transform_anchor", "zoom", "xzoom", "yzoom", "nearest", "alpha", \
+        "additive", "around", "alignaround", "angle", "radius", "crop", "crop_relative", "corner1", "corner2", "size", "subpixel", "delay", "events" };
     this->setWindowTitle("Revised - " + tr("Image Manager"));
     this->setWindowIcon(QIcon::fromTheme("folder-image"));
     this->setWindowFlags(Qt::Dialog);
@@ -30,25 +40,75 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
     this->setMinimumSize(640, 440);
 
     QSettings settings;
-    this->resize(settings.value("imageManagerSize", QSize(720, 480)).toSize());
+    this->resize(settings.value("imageManagerSize", QSize(720, 520)).toSize());
 
 
     // Left side
-    imageList = new QListWidget();
-    imageList->setMinimumWidth(256);
     imageList->setViewMode(QListView::ListMode);
-    imageList->setMovement(QListView::Static);
-    imageList->setSortingEnabled(true);
-    //imageList->setAlternatingRowColors(true);
     imageList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     imageList->setIconSize(QSize(128, 128));  // 128x128 thumbnails
 
+	connect(addAnotherImageButton, SIGNAL(clicked()),
+		this, SLOT(addAnotherImage()));
+    connect(addScaledImageButton, SIGNAL(clicked()),
+        this, SLOT(addScaledImage()));
+
+	connect(imageList, SIGNAL(currentTextChanged(QString)),
+		imageRefLineEdit, SLOT(setText(QString)));
+
+	connect(imageRefLineEdit, SIGNAL(returnPressed()),
+		this, SLOT(updateImageRefInList()));
+	connect(changeImageRefButton, SIGNAL(clicked()),
+		this, SLOT(updateImageRefInList()));
+	connect(removeSelectedImageButton, SIGNAL(clicked()),
+		this, SLOT(removeImageFromList()));
+	connect(setBackgroundButton, SIGNAL(clicked()),
+		this, SLOT(setBackground()));
+
+	connect(applyImageChange, SIGNAL(clicked()),
+		this, SLOT(insertImage()));
+
+
+	//connect(btnHide, SIGNAL(clicked()),	this, SLOT(hideImage()));
+
+
+	/*
+	connect(insertImageButtonLeft, SIGNAL(clicked()),
+		this, SLOT(insertImageLeft()));
+	connect(insertImageButtonCenter, SIGNAL(clicked()),
+		this, SLOT(insertImageCenter()));
+	connect(insertImageButtonRight, SIGNAL(clicked()),
+		this, SLOT(insertImageRight()));
+	*/
+
+	closeAction = new QAction(this);
+	closeAction->setShortcut(Qt::Key_Escape);
+	connect(closeAction, SIGNAL(triggered()),
+		this, SLOT(close()));
+	this->addAction(closeAction);
+    effectsComboBox->insertItems(0, effects);
+    effectsComboBox->setMaxVisibleItems(10);
+
+    ATLsComboBox1->insertItems(0, ATLs);
+    ATLsComboBox1->setMaxVisibleItems(10);
+    ATLsComboBox2->insertItems(0, ATLs);
+    ATLsComboBox2->setMaxVisibleItems(10);
+    ATLsComboBox3->insertItems(0, ATLs);
+    ATLsComboBox3->setMaxVisibleItems(10);
+    ATLsComboBox4->insertItems(0, ATLs);
+    ATLsComboBox4->setMaxVisibleItems(10);
+    ATLsComboBox5->insertItems(0, ATLs);
+    ATLsComboBox5->setMaxVisibleItems(10);
+    ATLsComboBox6->insertItems(0, ATLs);
+    ATLsComboBox6->setMaxVisibleItems(10);
+    enableOrDisableButtons();
+
+
+
+#if 0
     addAnotherImageButton = new QPushButton(QIcon::fromTheme("list-add"),
                                 tr("Add &More Images"));
-    connect(addAnotherImageButton, SIGNAL(clicked()),
-            this, SLOT(addAnotherImage()));
-
 
 
     // Right side
@@ -60,53 +120,29 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
     imageRefLineEdit->setMinimumWidth(128); // tmp?
     imageRefLabel->setBuddy(imageRefLineEdit);
 
-    connect(imageList, SIGNAL(currentTextChanged(QString)),
-            imageRefLineEdit, SLOT(setText(QString)));
-
-    connect(imageRefLineEdit, SIGNAL(returnPressed()),
-            this, SLOT(updateImageRefInList()));
 
 
     changeImageRefButton = new QPushButton(QIcon::fromTheme("edit-rename"),
                                            tr("Re&name"));
-    connect(changeImageRefButton, SIGNAL(clicked()),
-            this, SLOT(updateImageRefInList()));
-
     removeSelectedImageButton = new QPushButton(QIcon::fromTheme("list-remove"),
-                                                tr("&Remove from List"));
-    connect(removeSelectedImageButton, SIGNAL(clicked()),
-            this, SLOT(removeImageFromList()));
+                                                tr("&Remove"));
 
 
 
     setBackgroundButton = new QPushButton(QIcon::fromTheme("insert-image"),
                                           tr("Set as &Background"));
-    connect(setBackgroundButton, SIGNAL(clicked()),
-            this, SLOT(setBackground()));
 
 
     insertImageButtonLeft = new QPushButton(QIcon::fromTheme("align-horizontal-left"),
                                             tr("&Left"));
-    connect(insertImageButtonLeft, SIGNAL(clicked()),
-            this, SLOT(insertImageLeft()));
 
     insertImageButtonCenter = new QPushButton(QIcon::fromTheme("align-horizontal-center"),
                                               tr("&Center"));
-    connect(insertImageButtonCenter, SIGNAL(clicked()),
-            this, SLOT(insertImageCenter()));
 
     insertImageButtonRight = new QPushButton(QIcon::fromTheme("align-horizontal-right"),
                                              tr("&Right"));
-    connect(insertImageButtonRight, SIGNAL(clicked()),
-            this, SLOT(insertImageRight()));
 
 
-
-    closeAction = new QAction(this);
-    closeAction->setShortcut(Qt::Key_Escape);
-    connect(closeAction, SIGNAL(triggered()),
-            this, SLOT(close()));
-    this->addAction(closeAction);
 
 
 
@@ -130,12 +166,12 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
     currentImageGroupbox = new QGroupBox(tr("&Selected image"));
     currentImageLayout = new QGridLayout();
     currentImageLayout->addWidget(imageRefLabel,             0, 0,  1, 1);
-    currentImageLayout->addWidget(imageRefLineEdit,          0, 1,  1, 2);
+    currentImageLayout->addWidget(imageRefLineEdit,          0, 1,  2, 3);
     currentImageLayout->addWidget(changeImageRefButton,      0, 3,  1, 1);
-    currentImageLayout->addWidget(removeSelectedImageButton, 1, 3,  1, 1, Qt::AlignTop);
+	currentImageLayout->addWidget(removeSelectedImageButton, 0, 4, 1, 1);// , Qt::AlignTop);
 
     currentImageLayout->addWidget(setBackgroundButton,       2, 0,  1, 4, Qt::AlignBottom);
-    currentImageLayout->addWidget(alignButtonsGroupbox,      2, 0,  1, 4, Qt::AlignBottom);
+    currentImageLayout->addWidget(alignButtonsGroupbox,      3, 0,  1, 4, Qt::AlignBottom);
     currentImageGroupbox->setLayout(currentImageLayout);
 
 
@@ -148,11 +184,12 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
 
 
     // Ensure disabled buttons if img list is empty
-    enableOrDisableButtons();
+    
 
 
 #if 0  // TMP, for tests
     this->show();
+#endif
 #endif
 
     qDebug() << "ImageManager created";
@@ -170,7 +207,6 @@ ImageManager::~ImageManager()
 void ImageManager::enableOrDisableButtons()
 {
     bool enableButtons;
-
 
     if (imageList->count() <= 0)  // If list became empty, disable some widgets
     {
@@ -266,7 +302,7 @@ void ImageManager::saveImagesToRpyFile()
         rpyFileData.append("image ");
         rpyFileData.append(item->text());
         rpyFileData.append(" = ");
-        rpyFileData.append("\"" + item->data(Qt::UserRole).toString() + "\"");
+        rpyFileData.append("\"" + item->data(Qt::UserRole).toString().trimmed() + "\"");
         rpyFileData.append("\n");
     }
 
@@ -426,6 +462,53 @@ void ImageManager::addAnotherImage()
     enableOrDisableButtons();
 }
 
+void ImageManager::addScaledImage()
+{
+    float scale;
+    bool ok = false;
+    QString cmd="";
+    QString options = "";
+    QString commandline = "";
+    if (!imageList->currentItem())
+    {
+        return; // If there is no current item, don't do anything
+        // TMP FIXME nicer
+    }
+
+
+    QString ImageRef = this->imageRefLineEdit->text().replace("-", "_").trimmed();
+
+    if (!xScaleLineEdit->text().isEmpty()){
+        qDebug() << xScaleLineEdit->text().trimmed();
+        scale = xScaleLineEdit->text().toFloat(&ok);
+    }
+
+    QString filename = imageList->currentItem()->data(Qt::UserRole).toString().trimmed();
+
+    if (ok)
+        commandline = QString("image %1 scaled = im.FactorScale(\" %2 \", %3)").arg(ImageRef).arg(QFileInfo(filename).fileName()).arg(xScaleLineEdit->text().trimmed());
+
+    QListWidgetItem *imageItem = new QListWidgetItem();
+
+    // FIXME: aspect ratio, etc.
+    imageItem->setIcon(QIcon(QPixmap(filename).scaled(128, 128)));
+
+    // Set bare filename, without extension, as Image Ref initially
+    // replacing "-" with "_", as it's not supported in image refs
+    QString newimageRef = ImageRef+" scaled";
+    newimageRef.replace("-", " ");
+    newimageRef.replace("_", " ");
+    imageItem->setText(newimageRef);
+
+    // Store full filename with extension, without path, in the item
+
+
+   // Store full filename with extension, without path, in the item
+    imageItem->setData(Qt::UserRole, commandline);
+    imageList->addItem(imageItem);
+}
+
+
 
 
 /*
@@ -448,7 +531,7 @@ void ImageManager::showForEditing()
     // Hide unrequired buttons
     this->setBackgroundButton->hide();
 
-    this->alignButtonsGroupbox->hide(); // hides the 3 buttons inside
+//    this->alignButtonsGroupbox->hide(); // hides the 3 buttons inside
 
     this->show();
 }
@@ -460,20 +543,21 @@ void ImageManager::showSetBackground()
     this->setBackgroundButton->show();
     this->setBackgroundButton->setDefault(true);
 
-    this->alignButtonsGroupbox->hide();
+//    this->alignButtonsGroupbox->hide();
 
-    this->show();
+     this->show();
 }
 
 
 
 void ImageManager::showInsertImage()
 {
-    this->setBackgroundButton->hide();
-
-    this->alignButtonsGroupbox->show(); // shows the 3 buttons inside
-    this->insertImageButtonCenter->setDefault(true);
-
+    //TODO: delete this
+//    this->setBackgroundButton->hide();
+//    this->alignButtonsGroupbox->show(); // shows the 3 buttons inside
+//    this->insertImageButtonCenter->setDefault(true);
+    this->setBackgroundButton->show();
+    this->setBackgroundButton->setDefault(true);
     this->show(); // tmp
 }
 
@@ -508,6 +592,148 @@ void ImageManager::insertImageCenter()
 void ImageManager::insertImageRight()
 {
     this->insertImage("right");
+}
+
+void ImageManager::insertImage()
+{
+	//this->insertImage("left");
+    QString cmd="";
+    QString options = "";
+    QString image_string = "";
+    if (ckbHide->isChecked())
+        cmd = "hide ";
+    else
+        cmd = "show ";
+    if (!xPosLineEdit->text().isNull() && yPosLineEdit->text().isNull())
+    {
+        options = QString("at Position(xpos = %1, xanchor = %1, ypos = %2, yanchor = %2)").arg(xPosLineEdit->text(), yPosLineEdit->text());
+    }else
+    {
+        if (radioButtonL->isChecked())
+            options = options + " at left";
+        else if (radioButtonR->isChecked())
+            options = options + " at Right";
+        else
+            options = options + " at Middle";
+        options = options + " ";
+    }
+
+    //TODO: fix here
+    if (!behindCharactersLineEdit->text().isEmpty())
+        options = options + " behind " + behindCharactersLineEdit->text();//"behind mary, mary2"
+        
+    qDebug() << options;
+    qDebug() << image_string;
+    //call addImage(QString imageref, QString filename, QString cmd, QString option)
+    emit imageInsert(imageList->currentItem()->text(), cmd, 
+            options, projectPath + "/" + imageList->currentItem()->data(Qt::UserRole).toString());
+    if (effectsComboBox->currentIndex() > 1)
+    {
+        int index = effectsComboBox->currentIndex();
+        QString command2 = QString("with ").append(effects.at(index));
+        emit imageInsert(command2);
+    }
+
+
+   /* this->close();    */
+    QString cmdline0 = QString("show image ").append(imageList->currentItem()->text());
+    QString cmdline1="    ";
+    QString cmdline2 = "    ";
+    QString cmdline3 = "    ";
+    QString argATL("");
+    QStringList ATLcmds{};
+    ATLcmds.push_back(cmdline0);
+    if (ATLsComboBox1->currentIndex() > 0){
+        cmdline1.append(ATLs.at(ATLsComboBox1->currentIndex())).append(" ");
+        if (!ATLEdit1->text().isEmpty())
+        {
+            argATL = QString("%1 ").arg(ATLEdit1->text()); 
+            cmdline1.append(argATL);
+        }
+    }
+    if (ATLsComboBox2->currentIndex() > 0){
+        cmdline1.append(ATLs.at(ATLsComboBox2->currentIndex())).append(" ");
+        if (!ATLEdit2->text().isEmpty())
+        {
+            argATL = QString("%1").arg(ATLEdit2->text());
+            cmdline1.append(argATL);
+        }
+    }
+    qDebug() << cmdline1;
+    if (!cmdline1.trimmed().isEmpty())
+        ATLcmds.push_back(cmdline1);
+
+    if (ATLsComboBox3->currentIndex() > 0){
+        cmdline2.append(ATLs.at(ATLsComboBox3->currentIndex())).append(" ");
+        if (!ATLEdit3->text().isEmpty())
+        {
+            argATL = QString("%1 ").arg(ATLEdit3->text());
+            cmdline2.append(argATL);
+        }
+    }
+
+    if (ATLsComboBox4->currentIndex() > 0){
+        cmdline2.append(ATLs.at(ATLsComboBox4->currentIndex()));
+        if (!ATLEdit4->text().isEmpty())
+        {
+            argATL = QString(" %1 ").arg(ATLEdit4->text());
+            cmdline2.append(argATL);
+        }
+    }
+    qDebug() << cmdline2;
+    if (!cmdline2.trimmed().isEmpty())
+        ATLcmds.push_back(cmdline2);
+
+    if (ATLsComboBox5->currentIndex() > 0){
+        cmdline3.append(ATLs.at(ATLsComboBox5->currentIndex()));
+        if (!ATLEdit5->text().isEmpty())
+        {
+            argATL = QString(" %1 ").arg(ATLEdit5->text());
+            cmdline3.append(argATL);
+        }
+    }
+    if (ATLsComboBox6->currentIndex() > 0){
+        cmdline3.append(ATLs.at(ATLsComboBox6->currentIndex())).append(" ");
+        if (!ATLEdit6->text().isEmpty())
+        {
+            argATL = QString(" %1").arg(ATLEdit6->text());
+            cmdline3.append(argATL);
+        }
+    }
+    qDebug() << cmdline3;
+    if (!cmdline3.trimmed().isEmpty())
+        ATLcmds.push_back(cmdline3);
+    if (ALTLoopChkBox->isChecked())
+        ATLcmds.push_back("    repeat");
+    qDebug() << ATLcmds;
+    emit imageInsert(ATLcmds);
+}
+
+void ImageManager::hideImage()
+{
+	//this->insertImage("left");
+
+}
+
+
+void ImageManager::generateScript()
+{
+	//this->insertImage("left");
+	QString position;
+	if (this->radioButtonL->isChecked())
+		position = "at left";
+	if (this->radioButtonR->isChecked())
+		position = "at right";
+	if (this->radioButtonL->isChecked())
+		position = "";
+	if (this->xPosLineEdit->text() != ""&&this->yPosLineEdit->text() != "")
+		position = " at Position(xpos = " + this->xPosLineEdit->text() + \
+		" xanchor = " + this->xPosLineEdit->text() + \
+		", ypos = " + this->yPosLineEdit->text() + \
+		", yanchor = " + this->yPosLineEdit->text() + ")";
+	qDebug() << this->xPosLineEdit->text();
+    qDebug() << position;
+    //currentChapter->addStep(position);
 }
 
 

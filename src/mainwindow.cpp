@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,10 +22,9 @@
 
 #include "mainwindow.h"
 #include "projectmgr.h"
-/*
- * Constructor
- *
- */
+
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     this->programIdleTitle = "Revised - " + tr("Visual Editor for Ren'Py");
@@ -35,17 +35,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     characterManager = new CharacterManager(this);
     imageManager = new ImageManager(this);
+
+    audioManager = new AudioManagerForm(this);
+    videoManager = new VideoManager(this);
     gameOptionsManager = new GameOptionsManager(this);
-
-
-    // Visual scene designer: set background, characters, texts, menus...
-    sceneDesigner = new SceneDesigner(characterManager, imageManager);
+    timerForm = new TimerForm(this);
 
     // Code Editor with ren'py (and some python) syntax hightlighting
     codeEditor = new CodeEditor();
 
-
     chapterList = new ChapterList(characterManager);
+
+    // Visual scene designer: set background, characters, texts, menus...
+    sceneDesigner = new SceneDesigner(chapterList, characterManager, imageManager, audioManager, videoManager,timerForm);
+
+    
     connect(chapterList, SIGNAL(chapterChanged(Chapter*)),
             sceneDesigner, SLOT(loadChapter(Chapter*)));
     connect(chapterList, SIGNAL(chapterChanged(Chapter*)),
@@ -80,6 +84,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     //ctlToolBar->addAction(backAct);
     ctlToolBar->addAction(bgAct);
 	ctlToolBar->addAction(characterAct);
+    ctlToolBar->addAction(audioAct);
+    ctlToolBar->addAction(videoAct);
+    ctlToolBar->addAction(timerAct);
+
 
     mainSplitter = new QSplitter(Qt::Horizontal);
     mainSplitter->setChildrenCollapsible(false);
@@ -121,6 +129,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
  */
 MainWindow::~MainWindow()
 {
+    if (audioManager)delete(audioManager);
+    if (characterManager)delete(characterManager);
+    if (imageManager)delete(imageManager);
+    if (gameOptionsManager)delete(gameOptionsManager);
+
     qDebug() << "MainWindow destroyed";
 }
 
@@ -199,10 +212,21 @@ void MainWindow::createActions()
     connect(backAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
     bgAct = new QAction(QIcon(":/images/icon.png"), tr("background"), this);
-    bgAct->setStatusTip(tr("Show the Qt library's About box"));
+    bgAct->setStatusTip(tr("Background setup"));
 	connect(bgAct, SIGNAL(triggered()), imageManager, SLOT(showSetBackground()));
 	//connect(projectDefineImages, SIGNAL(triggered()),imageManager, SLOT(showForEditing()));
 
+	audioAct = new QAction(QIcon(":/images/Music-icon.png"), tr("audio"), this);
+	audioAct->setStatusTip(tr("audio file setup"));
+	connect(audioAct, SIGNAL(triggered()), audioManager, SLOT(showSetAudio()));
+
+	videoAct = new QAction(QIcon(":/images/video-icon.png"), tr("video"), this);
+	videoAct->setStatusTip(tr("video file setup"));
+	connect(videoAct, SIGNAL(triggered()), videoManager, SLOT(show()));
+
+    timerAct = new QAction(QIcon(":/images/timer_512.png"), tr("timer"), this);
+    timerAct->setStatusTip(tr("timer setup"));
+    connect(timerAct, SIGNAL(triggered()), timerForm, SLOT(show()));
 
 	characterAct = new QAction(QIcon(":/images/UserIcon.png"), tr("&Character"), this);
 	characterAct->setStatusTip(tr("Show the application's About box"));
@@ -516,9 +540,19 @@ void MainWindow::enableMenusAndWidgets(bool state)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     //this->projectmgr->saveSettings(this);
+
 	saveSettings();
     event->accept();
-
+    if (!projectPath.isEmpty()){
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Save before close?"),
+            tr("Save your projects?"),
+            QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            qDebug() << "Save before close";
+            saveProject();
+        } 
+    }
     qDebug() << "Window closed";
 
     qApp->quit(); // Exit program completely (close other windows, etc.)
@@ -613,6 +647,7 @@ void MainWindow::openProject(QString projFile)
 
 void MainWindow::storySaveAs()
 {
+    saveProject();
 	QString newProjectDirectory = QFileDialog::getExistingDirectory(this,
 		tr("Select the folder "
 		"where the project "
@@ -637,20 +672,28 @@ void MainWindow::storySaveAs()
 	if (QDir(newProjectPath).exists())
 	{
 		qDebug() << "Project exists!";
-		QMessageBox::warning(this, tr("Project already exists"),
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Project already exists do you want to override"),
 			tr("There is a project named %1 at %2 already.")
-			.arg(newProjectPath).arg(newProjectDirectory));
-		return;
+			.arg(newProjectPath).arg(newProjectDirectory),
+            QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            qDebug() << "Yes was clicked";
+            goto CREATE;
+            
+        }
+        
 		// TODO: ask to load it, or for another name
 	}
 	else
 	{
+
 		QMessageBox::information(this, tr("Project Renamed"),
 			tr("New project will be in %1  %2 .")
 			.arg(newProjectPath).arg(newProjectDirectory));
 
 		//projectmgr = new ProjectMgr(this);
-
+CREATE:
 
 		projectmgr->CopyProj(this, newProjectPath);
 
@@ -727,8 +770,6 @@ void MainWindow::closeProject()
 
     this->characterManager->clear();
     this->imageManager->clear();
-
-
 
     this->enableMenusAndWidgets(false);
 
@@ -807,10 +848,14 @@ void MainWindow::aboutRevised()
 {
     QMessageBox::about(this,
                        tr("About Revised"),
-                       "<b>Revised v0.2-dev</b><br />"
+                       "<b>Revised v0.2-build 201507111_02</b><br />"
                        "Copyright 2012-2015  JanKusanagi<br />"
                        "<a href=\"http://jancoding.wordpress.com/revised\">"
                        "http://jancoding.wordpress.com/revised</a><br />"
+                       "<br /><br />"
+                       "Copyright 2015-2015  Ray <br />"
+                       "<a href=\"http://rayx.me\">"
+                       "http://rayx.me/</a><br />"
                        "<br /><br />"
 
                        + tr("Revised is a visual editor, or wizard, for Ren'Py, "

@@ -34,7 +34,8 @@
 
 #include "charactermanager.h"
 #include "imagemanager.h"
-
+#include "videomanager.h"
+#include "timerform.h"
 #include "scenepreviewer.h"
 #include "charactercombobox.h"
 
@@ -42,20 +43,28 @@
 #include "step.h"
 
 #include "choicemenueditor.h"
-
+#include "choicemenueditorform.h"
+#include "audiomanagerform.h"
+#include "chapterlist.h"
 
 class SceneDesigner : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SceneDesigner(CharacterManager *mwCharacterManager,
-                           ImageManager *mwImageManager,
-                           QWidget *parent = 0);
+    explicit SceneDesigner(
+        ChapterList *mwChapterList,
+        CharacterManager *mwCharacterManager,
+        ImageManager *mwImageManager,
+        AudioManagerForm *mwAudioManager,
+        VideoManager *mwVideoManager,
+        TimerForm *mwTimerForm,
+        QWidget *parent = nullptr) ;
+
     ~SceneDesigner();
 
     void clear();
-
+    ChapterList *chapList;
 
 signals:
     void characterManagerRequested();
@@ -65,8 +74,16 @@ public slots:
 
     void addBackgroundStep(QString imageRef, QString filename);
     void addImageStep(QString imageRef,
+                      QString cmd,
                       QString alignment,
                       QString filename);
+    void addImageStep(QString command);
+    void addImageStep(QStringList commands);
+    void addAudioStep(QString audiostep);
+
+    void addVideoStep(QStringList videostep);
+    void addTimerStep(QStringList videostep);
+    void addMenuStep(QStringList commands);
     void addDialogStep();
 
     void renderStep(Step *step);
@@ -74,6 +91,8 @@ public slots:
     void deleteCurrentStep();
 	void showNextStep();
 	void showPrevStep();
+protected:
+
 
 
 
@@ -85,8 +104,10 @@ private:
 
     CharacterManager *characterManager;
     ImageManager *imageManager;
-
-    ChoiceMenuEditor *choiceMenuEditor;
+    AudioManagerForm *audioManager;
+    VideoManager *videoManager;
+    TimerForm *timerForm;
+    ChoiceMenuEditorForm *choiceMenuEditor;
 
     QPushButton *previousStepButton;
     QPushButton *nextStepButton;

@@ -20,6 +20,7 @@
 
 #include "scenepreviewer.h"
 #include <QFileInfo>
+
 ScenePreviewer::ScenePreviewer(QWidget *parent) : QWidget(parent)
 {
     this->setMinimumSize(640, 480);
@@ -31,7 +32,8 @@ ScenePreviewer::ScenePreviewer(QWidget *parent) : QWidget(parent)
 
 
     // Initial background
-    this->backgroundImage = ":/images/library.png";
+    //this->backgroundImage = ":/images/library.png";
+    mObject = new GameObject(nullptr,QString("newGO"));
 
     qDebug() << "ScenePreviewer created" << this->width() << this->height();
 }
@@ -165,9 +167,23 @@ void ScenePreviewer::paintEvent(QPaintEvent *event)
                            singleImagePixmap);
 
     }
+#if 0
+    QString singleImage("C:\\TEMP\\Robocop.jpg");
+    QPixmap singleImagePixmap = QPixmap(singleImage);
+    painter.drawPixmap(30, 80,
+        singleImagePixmap.width(), singleImagePixmap.height(),
+        singleImagePixmap);
 
-
-
+#endif
+#if 0
+    QString singleImage("C:\\TEMP\\monsters.png");
+    QPixmap singleImagePixmap = QPixmap(singleImage);
+    GameObject *ob=new GameObject(0, "GameObject", &singleImagePixmap);
+    //ob->paint(painter);
+    mObject = ob;
+    if (mObject)
+        paintObject(painter);
+#endif 
     QRect rectangle = QRect(64,                   // X
                             (maxHeight / 4) * 3,  // Y
                             maxWidth - 128,       // Width
@@ -206,3 +222,194 @@ void ScenePreviewer::paintEvent(QPaintEvent *event)
 
     event->accept();
 }
+
+
+void ScenePreviewer::paintObject(QPainter & ppaint)
+{
+    if (!mObject)
+        return;
+
+    //ppaint.fillRect(0, 0, width(), height(), Qt::gray);
+    mObject->paint(ppaint);
+    //drawSelection(painter, mObject->selectedObject()); TODO:
+    drawSelection(ppaint, mObject);
+}
+void ScenePreviewer::drawSelection(QPainter& painter, GameObject* object)
+{
+    if (!object)
+        return;
+
+    QRectF rectf = object->sceneRect();
+    painter.drawRect(rectf);
+
+    QBrush brush(QColor(255, 0, 0));
+    QPen pen;
+    pen.setWidth(1);
+    painter.save();
+    painter.setPen(pen);
+
+    QList<QRect> rects = object->resizeRects();
+    foreach(const QRect& rect, rects) {
+        painter.fillRect(rect, brush);
+        painter.drawRect(rect);
+    }
+
+    painter.restore();
+}
+
+void ScenePreviewer::mousePressEvent(QMouseEvent * event)
+{
+    if (event->button() != Qt::LeftButton) {
+        QWidget::mousePressEvent(event);
+        return;
+    }
+
+    qreal x = event->x(), y = event->y();
+    GameObject * object = 0;
+    mMousePressed = true;
+
+    if (mObject) {
+        mObject->selectObjectAt(x, y);
+        object = mObject->selectedObject();
+    }
+    /*
+    else if (mSceneManager->currentScene()) {
+        mSceneManager->currentScene()->selectObjectAt(x, y);
+        object = mSceneManager->currentScene()->selectedObject();
+    }
+    */
+    if (mCanResize)
+        mResizing = true;
+    else if (mCanMove) {
+        setCursor(Qt::ClosedHandCursor);
+        mMoving = true;
+    }
+    /*
+    if (object)
+        emit selectionChanged(object);
+    else if (mObject)
+        emit selectionChanged(mObject);
+    else
+        emit selectionChanged(0);
+        */
+    update();
+
+    QWidget::mousePressEvent(event);
+}
+
+void ScenePreviewer::mouseReleaseEvent(QMouseEvent * event)
+{
+    bool resizing = mResizing;
+    bool moving = mMoving;
+    GameObject* object = selectedObject();
+
+    mMousePressed = false;
+    mResizing = false;
+    mCanResize = false;
+    mMoving = false;
+
+    if (object) {
+        if (resizing)
+            object->stopResizing();
+        if (moving)
+            object->stopMove();
+        if (object->contains(event->x(), event->y()))
+            setCursor(Qt::OpenHandCursor);
+        else
+            setCursor(Qt::ArrowCursor);
+    }
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+void ScenePreviewer::mouseMoveEvent(QMouseEvent * event)
+{
+    GameObject* object = selectedObject();
+    qreal x = event->x(), y = event->y();
+    int i;
+
+    object = mObject;
+    //if moving or resizing an object
+    if (object && (mResizing || mMoving)) {
+        if (mResizing) {
+            object->resize(x, y);
+        }
+        else if (mMoving)
+            object->dragMove(x, y);
+        update();
+        return;
+    }
+
+    //get hovered object at x, y, if any
+    //TODO¡¡FIXME¡¡object = objectAt(x, y);
+    object = mObject;
+
+    mCanMove = false;
+    mCanResize = false;
+
+    if (!object) {
+        if (cursor().shape() != Qt::UpArrowCursor)
+            setCursor(Qt::UpArrowCursor);
+        return;
+    }
+
+    QList<QRect> rects = object->resizeRects();
+    for (i = 0; i < rects.size(); i++) {
+        if (rects.at(i).contains(x, y))
+            break;
+    }
+
+    object->setHoveredResizeRect(i);
+
+    //if cursor is not hovering one of the rectangles, move the object
+    if (i == rects.size()) {
+        mCanMove = object->contains(x, y);
+        if (mCanMove)
+            setCursor(Qt::OpenHandCursor);
+        else
+            setCursor(Qt::ArrowCursor);
+    }
+    else {
+
+        if (i % 2 == 0) {
+            if (i == 0 || i == 4)
+                setCursor(Qt::SizeFDiagCursor);
+            else
+                setCursor(Qt::SizeBDiagCursor);
+        }
+        else {
+            if (i == 1 || i == 5)
+                setCursor(Qt::SizeVerCursor);
+            else
+                setCursor(Qt::SizeHorCursor);
+        }
+
+        mCanResize = true;
+    }
+}
+
+GameObject *ScenePreviewer::selectedObject()
+{
+    if (mObject)
+        return mObject->selectedObject();
+ //   else if (mSceneManager && mSceneManager->currentScene())
+ //       return mSceneManager->currentScene()->selectedObject();
+    return 0;
+}
+
+GameObject* ScenePreviewer::objectAt(qreal x, qreal y)
+{
+    if (mObject)
+        return mObject->objectAt(x, y);
+ //   else if (mSceneManager && mSceneManager->currentScene())
+ //       return mSceneManager->currentScene()->objectAt(x, y);
+    return 0;
+}
+/*
+void ScenePreviewer::resizeEvent(QResizeEvent * event)
+{
+    QWidget::resizeEvent(event);
+    setFixedSize(event->size());
+    //mSceneManager->onResizeEvent(event);
+    }*/
+

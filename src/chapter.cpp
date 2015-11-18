@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 Chapter::Chapter(QString scriptFilename,
                  QTreeWidgetItem *treeItem,
                  CharacterManager *mwCharacterManager,
-                 QObject *parent) : QObject(parent)
+                 QObject *parent) : QObject(parent), currentStep(0)
 {
     this->filename = scriptFilename;
     this->item = treeItem;
@@ -36,7 +37,8 @@ Chapter::Chapter(QString scriptFilename,
 
     QString scriptLine;
 	Step *pstep;
-	pstep->init_step();
+	//pstep->init_step();
+    QTreeWidgetItem * currentSceneItem=nullptr;
     while (!scriptFile.atEnd())
     {
         scriptLine = scriptFile.readLine();
@@ -46,7 +48,13 @@ Chapter::Chapter(QString scriptFilename,
 		if (!scriptLine.trimmed().startsWith("#") && !scriptLine.trimmed().isEmpty())
         {
             // TODO: if line starts with "menu" or "label", read the rest of the block
-			pstep = new Step(scriptLine, this->item, characterAliases, this);
+            pstep = new Step(scriptLine, this->item, currentSceneItem,characterAliases, this);
+            if (pstep->getStepType() == sceneStep){
+                curSceneStep = pstep;
+                currentSceneItem = pstep->selfTreeItem;
+            }
+
+            
 			addStep(pstep);
         }
 
@@ -63,26 +71,30 @@ Chapter::~Chapter()
     qDebug() << "Chapter destroyed";
 }
 
-
-
-
-
 void Chapter::addStep(Step *step)
 {
     this->steps.append(step);
-    //qDebug() << "Chapter::addStep() steps =" << steps.length();
+    //this->steps.insert(currentStep, step);
+    qDebug() << "Chapter::addStep() steps =" << steps.length();
 }
-
+void Chapter::insertStep(Step *step)
+{
+    this->steps.insert(currentStep++, step);
+    qDebug() << "Chapter::addStep() steps =" << steps.length();
+}
 
 void Chapter::removeCurrentStep()
 {
     qDebug() << "Removing current step";
 
     /// FIXME, last for now
-    this->steps.removeLast();
+    //this->steps.removeLast();
     // remove also from Qtreewidget
-
-    qDebug() << "steps left:" << this->steps.size();
+    auto it = steps.begin();
+    it += currentStep;
+    steps.erase(it);
+    qDebug() << "remove  steps left:" << this->steps.size() << "at" << currentStep;
+    currentStep--;
 }
 
 
@@ -120,8 +132,27 @@ QString Chapter::getScriptFilename()
 }
 
 
+void Chapter::RemoveStepAt(int i)
+{
+    steps.removeAt(i);
+}
+
 
 QTreeWidgetItem* Chapter::getTreeItem()
 {
     return this->item;
+}
+void Chapter::removeStepAt(Step *step)
+{
+    int i = 0;
+    for (auto s : steps)
+    {
+        if (s == step){
+            steps.removeAt(i);
+            break;
+        }
+
+        ++i;
+    }
+
 }

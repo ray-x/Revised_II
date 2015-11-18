@@ -1,6 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
  *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2015  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -64,8 +65,19 @@
 
 #include "charactermanager.h"
 #include "imagemanager.h"
+
+#include "videomanager.h"
+#include "timerform.h"
 #include "ProjectMgr.h"
 #include "gameoptionsmanager.h"
+
+#include "audiomanagerform.h"
+
+/*
+* Constructor
+*
+*/
+
 
 
 class MainWindow : public QMainWindow
@@ -189,7 +201,10 @@ private:
     QAction *rollbackAct;
     QAction *backAct;
     QAction *bgAct;
+	QAction *audioAct;
+	QAction *videoAct;
 	QAction *characterAct;
+    QAction *timerAct;
     // Add end
 
     // Configuration window
@@ -200,6 +215,11 @@ private:
 
     // Image manager
     ImageManager *imageManager;
+
+    AudioManagerForm *audioManager;
+
+    VideoManager *videoManager;
+    TimerForm *timerForm;
 
     // Game Options manager
     GameOptionsManager *gameOptionsManager;
@@ -220,7 +240,6 @@ private:
     QStringList fileList;
 
 	ProjectMgr *projectmgr;
-
 };
 
 

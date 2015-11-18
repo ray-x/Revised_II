@@ -32,7 +32,7 @@
 #include <QDebug>
 
 #include "chapter.h"
-
+#include "step.h"
 class ChapterList : public QWidget
 {
     Q_OBJECT
@@ -43,7 +43,10 @@ public:
     ~ChapterList();
 
     void clearContents();
-    
+    QTreeWidgetItem * currentItem;
+    bool stepCopied;
+
+
 signals:
     void chapterChanged(Chapter *chapter);
     void stepRenderRequest(Step *step);
@@ -59,7 +62,9 @@ public slots:
 
     void addChapter();
     void removeChapter();
-
+    void RemoveStep();
+    void CopyStep();
+    void InsertCopiedStep();
 
 private:
     QVBoxLayout *mainLayout;
@@ -69,13 +74,20 @@ private:
     QPushButton *removeChapterButton;
 
     QPushButton *removeStepButton;
-
+    QString *copiedStepLine;
 
     CharacterManager *characterManager;
     QString projectPath;
     QList<Chapter *> chapters;
     int currentChapter;
 	int currentStep;
+    Step *stepsel;
+
+    QAction *pRemoveStep;
+    QAction *pCopyStep;
+    QAction *pInsertCopiedStep;
+    QAction *pAddChapter;
+    QAction *pRemoveChapter;
 };
 
 #endif // CHAPTERLIST_H

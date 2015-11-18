@@ -54,6 +54,7 @@ void CharacterComboBox::populate(QStringList namesList,
     this->clear();
 
 
+
     this->addItem("-" + tr("Narrator") + "-");
     this->insertSeparator(1);
 
@@ -71,8 +72,13 @@ void CharacterComboBox::populate(QStringList namesList,
         // FIXME: some error control missing
     }
 
+
+
     this->insertSeparator(this->count());
     this->addItem("-" + tr("Add New Character") + "-");
+
+    this->addItem(tr(" Add New Label: ") );
+    this->insertSeparator(this->count());
 
 
 
@@ -96,7 +102,7 @@ void CharacterComboBox::checkSelectedOption(int option)
 
 
     // If the user selected the last option, "Add New Character"
-    if (option+1 == this->count())
+    if (this->currentText() == "-Add New Character-")
     {
         this->setCurrentIndex(0); // Take it back to "Narrator"
 
