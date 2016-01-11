@@ -105,99 +105,13 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
     enableOrDisableButtons();
 
 
-
-#if 0
-    addAnotherImageButton = new QPushButton(QIcon::fromTheme("list-add"),
-                                tr("Add &More Images"));
-
-
-    // Right side
-    imageRefLabel = new QLabel(tr("&ID:"));
-    imageRefLabel->setAlignment(Qt::AlignLeft);
-
-    imageRefLineEdit = new QLineEdit();
-    imageRefLineEdit->setPlaceholderText(tr("Example: character happy smile"));
-    imageRefLineEdit->setMinimumWidth(128); // tmp?
-    imageRefLabel->setBuddy(imageRefLineEdit);
-
-
-
-    changeImageRefButton = new QPushButton(QIcon::fromTheme("edit-rename"),
-                                           tr("Re&name"));
-    removeSelectedImageButton = new QPushButton(QIcon::fromTheme("list-remove"),
-                                                tr("&Remove"));
-
-
-
-    setBackgroundButton = new QPushButton(QIcon::fromTheme("insert-image"),
-                                          tr("Set as &Background"));
-
-
-    insertImageButtonLeft = new QPushButton(QIcon::fromTheme("align-horizontal-left"),
-                                            tr("&Left"));
-
-    insertImageButtonCenter = new QPushButton(QIcon::fromTheme("align-horizontal-center"),
-                                              tr("&Center"));
-
-    insertImageButtonRight = new QPushButton(QIcon::fromTheme("align-horizontal-right"),
-                                             tr("&Right"));
-
-
-
-
-
-    // Layouts
-
-    imageListGroupbox = new QGroupBox(tr("&Available images"));
-    imageListLayout = new QVBoxLayout();
-    imageListLayout->addWidget(imageList);
-    imageListLayout->addWidget(addAnotherImageButton);
-    imageListGroupbox->setLayout(imageListLayout);
-
-
-    alignButtonsGroupbox = new QGroupBox(tr("Insert image at"));
-    alignButtonsLayout = new QHBoxLayout();
-    alignButtonsLayout->addWidget(insertImageButtonLeft);
-    alignButtonsLayout->addWidget(insertImageButtonCenter);
-    alignButtonsLayout->addWidget(insertImageButtonRight);
-    alignButtonsGroupbox->setLayout(alignButtonsLayout);
-
-
-    currentImageGroupbox = new QGroupBox(tr("&Selected image"));
-    currentImageLayout = new QGridLayout();
-    currentImageLayout->addWidget(imageRefLabel,             0, 0,  1, 1);
-    currentImageLayout->addWidget(imageRefLineEdit,          0, 1,  2, 3);
-    currentImageLayout->addWidget(changeImageRefButton,      0, 3,  1, 1);
-	currentImageLayout->addWidget(removeSelectedImageButton, 0, 4, 1, 1);// , Qt::AlignTop);
-
-    currentImageLayout->addWidget(setBackgroundButton,       2, 0,  1, 4, Qt::AlignBottom);
-    currentImageLayout->addWidget(alignButtonsGroupbox,      3, 0,  1, 4, Qt::AlignBottom);
-    currentImageGroupbox->setLayout(currentImageLayout);
-
-
-    mainLayout = new QHBoxLayout();
-    mainLayout->addWidget(imageListGroupbox,    1);  // stretch 1/2
-    mainLayout->addSpacing(16);
-    mainLayout->addWidget(currentImageGroupbox, 1);
-    this->setLayout(mainLayout);
-
-
-
-    // Ensure disabled buttons if img list is empty
-    
-
-
-#if 0  // TMP, for tests
-    this->show();
-#endif
-#endif
-
     qDebug() << "ImageManager created";
 }
 
 
 ImageManager::~ImageManager()
 {
+    delete(closeAction);
     qDebug() << "ImageManager destroyed";
 }
 

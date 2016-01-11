@@ -1,7 +1,7 @@
 /*
  *   This file is part of Revised, a visual editor for Ren'Py
- *   Copyright 2012-2015  JanKusanagi JRR <jancoding@gmx.com>
- *             2014-2015  Ray             <ray.cn@gmail.com>
+ *   Copyright 2012-2014  JanKusanagi JRR <jancoding@gmx.com>
+ *             2014-2016  Ray             <ray.cn@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -96,7 +96,24 @@ ChoiceMenuEditor::ChoiceMenuEditor(QWidget *parent) : QWidget(parent)
     qDebug() << "ChoiceMenuEditor created";
 }
 
+ChoiceMenuEditor::~ChoiceMenuEditor() 
+{
+    delete(choicesList);
+    delete(choiceTextLineEdit);
+    delete(jumpToComboBox);
+    delete(addChoiceButton);
+    delete(removeChoiceButton);
+    delete(finishButton);
+    delete(cancelButton);
+    delete(closeAction);
+    delete(leftFormLayout);
+    delete(rightFormLayout);
+    delete(topLayout);
+    delete(buttonsLayout);
+    delete(mainLayout);
 
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// SLOTS //////////////////////////////////////

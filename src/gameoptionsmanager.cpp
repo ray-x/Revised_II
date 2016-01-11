@@ -90,6 +90,15 @@ GameOptionsManager::GameOptionsManager(QWidget *parent) :  QWidget(parent)
 
 GameOptionsManager::~GameOptionsManager()
 {
+    delete(configWindowTitle);
+    delete(configScreenHeight);
+    delete(configScreenWidth);
+    delete(formLayout);
+    delete(okButton);
+    delete(cancelButton);
+    delete(closeAction);
+    delete(bottomLayout);
+    delete(mainLayout);
     qDebug() << "GameOptionsManager destroyed";
 }
 

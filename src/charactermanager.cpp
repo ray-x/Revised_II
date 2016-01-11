@@ -137,6 +137,21 @@ CharacterManager::CharacterManager(QWidget *parent) : QWidget(parent)
 
 CharacterManager::~CharacterManager()
 {
+    delete(characterAliasLabel);
+    delete(characterList);
+    delete(characterName);
+    delete(characterNameLabel);
+    delete(colorCodeLabel);
+    delete(chooseColorButton);
+    delete(updateCharacterButton);
+    delete(addMoreCharactersButton);
+    delete(removeCharacterButton);
+    delete(closeAction);
+    delete(leftLayout);
+    delete(rightLayout);
+    delete(colorCode);
+    delete(rightGroupBox);
+    delete(characterList);
     qDebug() << "CharacterManager destroyed";
 }
 

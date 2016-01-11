@@ -133,6 +133,19 @@ MainWindow::~MainWindow()
     if (characterManager)delete(characterManager);
     if (imageManager)delete(imageManager);
     if (gameOptionsManager)delete(gameOptionsManager);
+    if (mainSplitter)delete(mainSplitter);
+    if (configWindow)delete(configWindow);
+    if (tabWidget)delete(tabWidget);
+    if (sceneDesigner)delete(sceneDesigner);
+    if (timerForm)delete(timerForm);
+    if (codeEditor)delete(codeEditor);
+    if (chapterList)delete(chapterList);
+    if (videoManager)delete(videoManager);
+    if (timerForm) delete (timerForm);
+    if (fileToolBar) delete (fileToolBar);
+    if (editToolBar) delete (editToolBar);
+    if (ctlToolBar) delete (ctlToolBar);
+    if (mainSplitter) delete (mainSplitter);
 
     qDebug() << "MainWindow destroyed";
 }
@@ -848,11 +861,7 @@ void MainWindow::aboutRevised()
 {
     QMessageBox::about(this,
                        tr("About Revised"),
-                       "<b>Revised v0.2-build 201507111_02</b><br />"
-                       "Copyright 2012-2015  JanKusanagi<br />"
-                       "<a href=\"http://jancoding.wordpress.com/revised\">"
-                       "http://jancoding.wordpress.com/revised</a><br />"
-                       "<br /><br />"
+                       "<b>Revised II build 201601007_02</b><br />"
                        "Copyright 2015-2015  Ray <br />"
                        "<a href=\"http://rayx.me\">"
                        "http://rayx.me/</a><br />"

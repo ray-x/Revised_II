@@ -45,6 +45,7 @@ class ChoiceMenuEditor : public QWidget
 
 public:
     explicit ChoiceMenuEditor(QWidget *parent = 0);
+    ~ChoiceMenuEditor();
     
 signals:
     

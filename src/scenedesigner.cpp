@@ -161,6 +161,19 @@ SceneDesigner::SceneDesigner(
 
 SceneDesigner::~SceneDesigner()
 {
+    delete(scenePreviewer);
+    delete(previousStepButton);
+    delete(choiceMenuEditor);
+    delete(nextStepButton);
+    delete(deleteStepButton);
+    delete(insertMenuButton);
+    delete(setBackgroundButton);
+    delete(insertMenuButton);
+    delete(characterComboBox);
+    delete(textLine);
+    delete(acceptTextButton);
+    delete(controlsLayout);
+    delete(mainLayout);
     qDebug() << "SceneDesigner destroyed";
 }
 

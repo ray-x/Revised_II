@@ -83,6 +83,14 @@ ConfigurationWindow::ConfigurationWindow(QString renpyExecutable,
 
 ConfigurationWindow::~ConfigurationWindow()
 {
+    delete(lowerLayout);
+    delete(upperLayout);
+    delete(renpyExecutableLineEdit);
+    delete(projectsFolderLineEdit);
+    delete(okButton);
+    delete(cancelButton);
+    delete(mainLayout);
+    delete(closeAction);
     qDebug() << "ConfigurationWindow destroyed";
 }
 

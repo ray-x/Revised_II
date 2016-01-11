@@ -485,6 +485,9 @@ Step::Step(QString line, QTreeWidgetItem *treeItemScene, Step *selStep, QStringL
 
 Step::~Step()
 {
+    //fix_me need to check if we need to delete seperate nodes
+    if (selfTreeItem) delete (selfTreeItem);
+    if (sceneItem) delete (sceneItem);
     qDebug() << "Step destroyed";
 }
 

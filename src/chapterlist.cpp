@@ -147,6 +147,11 @@ ChapterList::~ChapterList()
     delete(pRemoveStep);
     delete(pCopyStep);
     delete(pInsertCopiedStep);
+    delete(removeChapterButton);
+    delete(addChapterButton);
+    delete(pAddChapter);
+    delete(removeChapterButton);
+    delete(treeWidget);
 
     qDebug() << "ChapterList destroyed";
 }
