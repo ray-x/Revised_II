@@ -33,7 +33,7 @@ class ProjectMgr : public QObject
 public:
     explicit ProjectMgr(QObject *parent = 0);
 	ProjectMgr(MainWindow *win , QString path = "");
-	//explicit ProjectMgr(MainWindow *win);
+
 	bool ImportSaveProj(QString *projectname);
 	bool CreateNewProj(MainWindow *win);
 	bool CreateNewProj(QString *loadProjectFiles);

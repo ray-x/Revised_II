@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'timerform.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -134,28 +134,28 @@ public:
 
     void retranslateUi(QWidget *TimerForm)
     {
-        TimerForm->setWindowTitle(QApplication::translate("TimerForm", "Form", 0));
-        label->setText(QApplication::translate("TimerForm", "TimerName:", 0));
-        label_2->setText(QApplication::translate("TimerForm", "TimerCountDown:", 0));
-        displayCheckBox->setText(QApplication::translate("TimerForm", "Displayable", 0));
-        timerNamelineEdit->setText(QApplication::translate("TimerForm", "Timer", 0));
-        timerCountDownlineEdit->setText(QApplication::translate("TimerForm", "30", 0));
-        timerActionlineEdit->setText(QApplication::translate("TimerForm", "[Hide(\"timer\"), Jump(\"gameover\")]", 0));
-        timerDisplayableLineEdit->setPlainText(QApplication::translate("TimerForm", "add DynamicDisplayable(countdown, sec = time) align (0.5, 0.3)", 0));
+        TimerForm->setWindowTitle(QApplication::translate("TimerForm", "Form", Q_NULLPTR));
+        label->setText(QApplication::translate("TimerForm", "TimerName:", Q_NULLPTR));
+        label_2->setText(QApplication::translate("TimerForm", "TimerCountDown:", Q_NULLPTR));
+        displayCheckBox->setText(QApplication::translate("TimerForm", "Displayable", Q_NULLPTR));
+        timerNamelineEdit->setText(QApplication::translate("TimerForm", "Timer", Q_NULLPTR));
+        timerCountDownlineEdit->setText(QApplication::translate("TimerForm", "30", Q_NULLPTR));
+        timerActionlineEdit->setText(QApplication::translate("TimerForm", "[Hide(\"timer\"), Jump(\"gameover\")]", Q_NULLPTR));
+        timerDisplayableLineEdit->setPlainText(QApplication::translate("TimerForm", "add DynamicDisplayable(countdown, sec = time) align (0.5, 0.3)", Q_NULLPTR));
         timerPyPlainTextEdit->setPlainText(QApplication::translate("TimerForm", "init python:                  \n"
 "    def countdown(st, at, sec):\n"
 "        rs = sec - st\n"
 "        rt = Text('Remain {:.1f} Sec'.format(rs), size = 40)\n"
-"        return (rt, 0.1)", 0));
-        label_4->setText(QApplication::translate("TimerForm", "Dynamic", 0));
-        label_5->setText(QApplication::translate("TimerForm", "Displayable", 0));
-        showTimerPushButton->setText(QApplication::translate("TimerForm", "Show Timer Screen", 0));
-        timerPosionlineEdit->setText(QApplication::translate("TimerForm", "at Position(xalign=.1, yalign=.1)", 0));
-        hideTimerPushBtn->setText(QApplication::translate("TimerForm", "Hide Timer", 0));
-        label_6->setText(QApplication::translate("TimerForm", "effect:", 0));
+"        return (rt, 0.1)", Q_NULLPTR));
+        label_4->setText(QApplication::translate("TimerForm", "Dynamic", Q_NULLPTR));
+        label_5->setText(QApplication::translate("TimerForm", "Displayable", Q_NULLPTR));
+        showTimerPushButton->setText(QApplication::translate("TimerForm", "Show Timer Screen", Q_NULLPTR));
+        timerPosionlineEdit->setText(QApplication::translate("TimerForm", "at Position(xalign=.1, yalign=.1)", Q_NULLPTR));
+        hideTimerPushBtn->setText(QApplication::translate("TimerForm", "Hide Timer", Q_NULLPTR));
+        label_6->setText(QApplication::translate("TimerForm", "effect:", Q_NULLPTR));
         timerPositionChkBox->setText(QString());
-        timerActionCheckBox->setText(QApplication::translate("TimerForm", "TimerAction:", 0));
-        addTimerPushButton->setText(QApplication::translate("TimerForm", "Add Timer", 0));
+        timerActionCheckBox->setText(QApplication::translate("TimerForm", "TimerAction:", Q_NULLPTR));
+        addTimerPushButton->setText(QApplication::translate("TimerForm", "Add Timer", Q_NULLPTR));
     } // retranslateUi
 
 };

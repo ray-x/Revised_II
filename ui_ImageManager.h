@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ImageManager.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -276,44 +276,44 @@ public:
 
     void retranslateUi(QWidget *ImageManagerForm)
     {
-        ImageManagerForm->setWindowTitle(QApplication::translate("ImageManagerForm", "Form", 0));
-        imageListGroupbox->setTitle(QApplication::translate("ImageManagerForm", "Avalible Images", 0));
-        addAnotherImageButton->setText(QApplication::translate("ImageManagerForm", "Add More Images", 0));
-        setBackgroundButton->setText(QApplication::translate("ImageManagerForm", "Set As Background", 0));
-        currentImageGroupbox->setTitle(QApplication::translate("ImageManagerForm", "Show Image Settings", 0));
-        imageRefLabel->setText(QApplication::translate("ImageManagerForm", "ID", 0));
-        groupBox_3->setTitle(QApplication::translate("ImageManagerForm", "Image Position", 0));
-        radioButtonL->setText(QApplication::translate("ImageManagerForm", "Left", 0));
-        radioButtonM->setText(QApplication::translate("ImageManagerForm", "Middle", 0));
-        radioButtonR->setText(QApplication::translate("ImageManagerForm", "Right", 0));
-        groupBox_4->setTitle(QApplication::translate("ImageManagerForm", "Position", 0));
-        label_3->setText(QApplication::translate("ImageManagerForm", "xPos", 0));
-        label_4->setText(QApplication::translate("ImageManagerForm", "yPos", 0));
-        label_2->setText(QApplication::translate("ImageManagerForm", "Or Specific your Position:", 0));
+        ImageManagerForm->setWindowTitle(QApplication::translate("ImageManagerForm", "Form", Q_NULLPTR));
+        imageListGroupbox->setTitle(QApplication::translate("ImageManagerForm", "Avalible Images", Q_NULLPTR));
+        addAnotherImageButton->setText(QApplication::translate("ImageManagerForm", "Add More Images", Q_NULLPTR));
+        setBackgroundButton->setText(QApplication::translate("ImageManagerForm", "Set As Background", Q_NULLPTR));
+        currentImageGroupbox->setTitle(QApplication::translate("ImageManagerForm", "Show Image Settings", Q_NULLPTR));
+        imageRefLabel->setText(QApplication::translate("ImageManagerForm", "ID", Q_NULLPTR));
+        groupBox_3->setTitle(QApplication::translate("ImageManagerForm", "Image Position", Q_NULLPTR));
+        radioButtonL->setText(QApplication::translate("ImageManagerForm", "Left", Q_NULLPTR));
+        radioButtonM->setText(QApplication::translate("ImageManagerForm", "Middle", Q_NULLPTR));
+        radioButtonR->setText(QApplication::translate("ImageManagerForm", "Right", Q_NULLPTR));
+        groupBox_4->setTitle(QApplication::translate("ImageManagerForm", "Position", Q_NULLPTR));
+        label_3->setText(QApplication::translate("ImageManagerForm", "xPos", Q_NULLPTR));
+        label_4->setText(QApplication::translate("ImageManagerForm", "yPos", Q_NULLPTR));
+        label_2->setText(QApplication::translate("ImageManagerForm", "Or Specific your Position:", Q_NULLPTR));
 #ifndef QT_NO_WHATSTHIS
-        behindCharactersLineEdit->setWhatsThis(QApplication::translate("ImageManagerForm", "name list sperate by ','", 0));
+        behindCharactersLineEdit->setWhatsThis(QApplication::translate("ImageManagerForm", "name list sperate by ','", Q_NULLPTR));
 #endif // QT_NO_WHATSTHIS
         behindCharactersLineEdit->setText(QString());
-        label_7->setText(QApplication::translate("ImageManagerForm", "Behind:", 0));
-        label_8->setText(QApplication::translate("ImageManagerForm", "(Image behind this characters)", 0));
-        applyImageChange->setText(QApplication::translate("ImageManagerForm", "&Add Step", 0));
-        applyImageChange->setShortcut(QApplication::translate("ImageManagerForm", "Ctrl+A", 0));
-        changeImageRefButton->setText(QApplication::translate("ImageManagerForm", "Rename", 0));
-        removeSelectedImageButton->setText(QApplication::translate("ImageManagerForm", "&Delete", 0));
-        ckbHide->setText(QApplication::translate("ImageManagerForm", "Hide", 0));
-        xScaleLineEdit->setText(QApplication::translate("ImageManagerForm", "1", 0));
-        label_5->setText(QApplication::translate("ImageManagerForm", "xScale:", 0));
-        addScaledImageButton->setText(QApplication::translate("ImageManagerForm", "AddScaled", 0));
-        label->setText(QApplication::translate("ImageManagerForm", "Transitions:", 0));
+        label_7->setText(QApplication::translate("ImageManagerForm", "Behind:", Q_NULLPTR));
+        label_8->setText(QApplication::translate("ImageManagerForm", "(Image behind this characters)", Q_NULLPTR));
+        applyImageChange->setText(QApplication::translate("ImageManagerForm", "&Add Step", Q_NULLPTR));
+        applyImageChange->setShortcut(QApplication::translate("ImageManagerForm", "Ctrl+A", Q_NULLPTR));
+        changeImageRefButton->setText(QApplication::translate("ImageManagerForm", "Rename", Q_NULLPTR));
+        removeSelectedImageButton->setText(QApplication::translate("ImageManagerForm", "&Delete", Q_NULLPTR));
+        ckbHide->setText(QApplication::translate("ImageManagerForm", "Hide", Q_NULLPTR));
+        xScaleLineEdit->setText(QApplication::translate("ImageManagerForm", "1", Q_NULLPTR));
+        label_5->setText(QApplication::translate("ImageManagerForm", "xScale:", Q_NULLPTR));
+        addScaledImageButton->setText(QApplication::translate("ImageManagerForm", "AddScaled", Q_NULLPTR));
+        label->setText(QApplication::translate("ImageManagerForm", "Transitions:", Q_NULLPTR));
         effectsComboBox->setCurrentText(QString());
-        groupBox->setTitle(QApplication::translate("ImageManagerForm", "ATL", 0));
+        groupBox->setTitle(QApplication::translate("ImageManagerForm", "ATL", Q_NULLPTR));
         ATLsComboBox5->setCurrentText(QString());
         ATLsComboBox1->setCurrentText(QString());
         ATLsComboBox3->setCurrentText(QString());
         ATLsComboBox6->setCurrentText(QString());
         ATLsComboBox2->setCurrentText(QString());
         ATLsComboBox4->setCurrentText(QString());
-        ALTLoopChkBox->setText(QApplication::translate("ImageManagerForm", "Repeat", 0));
+        ALTLoopChkBox->setText(QApplication::translate("ImageManagerForm", "Repeat", Q_NULLPTR));
     } // retranslateUi
 
 };

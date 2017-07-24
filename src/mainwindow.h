@@ -68,7 +68,6 @@
 
 #include "videomanager.h"
 #include "timerform.h"
-#include "ProjectMgr.h"
 #include "gameoptionsmanager.h"
 
 #include "audiomanagerform.h"
@@ -78,7 +77,7 @@
 *
 */
 
-
+class ProjectMgr;
 
 class MainWindow : public QMainWindow
 {

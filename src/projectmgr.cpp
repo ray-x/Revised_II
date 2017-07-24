@@ -120,7 +120,7 @@ bool ProjectMgr::saveSettings(MainWindow *win)
 		QSettings settings(projectfile, QSettings::IniFormat);
 		qDebug() << "error code" << settings.status() << endl;
 		if (1){
-			settings.setValue("mainWindowSize", win->size());
+			settings.setValue("mainWindowSize", ((QWidget*)win) ->size());
 			settings.setValue("mainSplitterState", win->mainSplitter->saveState());
 
 			settings.setValue("renpyExecutable", win->renpyExecutable);
@@ -246,12 +246,12 @@ bool ProjectMgr::loadProjectFiles(MainWindow *win)
 		qDebug() << "Loaded project:" << win->projectName << "from" << win->projectPath;
 
 
-		win->setWindowTitle("Revised - " + win->projectName);
+		((QWidget*)win)->setWindowTitle("Revised - " + win->projectName);
 
 		// Re-enable some menus and widgets that were disabled initially or after project closed
 		win->enableMenusAndWidgets(true);
 
-		win->setStatusTip(tr("Project %1 loaded").arg(win->projectName));
+		((QWidget*)win)->setStatusTip(tr("Project %1 loaded").arg(win->projectName));
 
 
 		// On successful load, add this project at the top of the Recent list

@@ -40,8 +40,8 @@ TimerForm::TimerForm(QWidget *parent) :
     //connect(ui->newTimerPushButton, SIGNAL(clicked()), this, SLOT(addMoreVideo()));
     connect(ui->showTimerPushButton, SIGNAL(clicked()), this, SLOT(showTimer()));
     connect(ui->hideTimerPushBtn, SIGNAL(clicked()), this, SLOT(hideTimer()));
-    effectsStrL = { "None", "fade", "dissolve", "pixellate", "move", "moveinright", "moveoutright", "ease", \
-        "zoomin", "zoomout", "zoominout", "vpunch", "hpunch", "blinds", "squares", "wipeleft", "slideleft", "slideawayleft", "irisin" };
+	effectsStrL = QStringList({ "None", "fade", "dissolve", "pixellate", "move", "moveinright", "moveoutright", "ease", \
+		"zoomin", "zoomout", "zoominout", "vpunch", "hpunch", "blinds", "squares", "wipeleft", "slideleft", "slideawayleft", "irisin" });
     ui->effectComboBox->insertItems(0, effectsStrL);
     ui->effectComboBox->setMaxVisibleItems(10);
 

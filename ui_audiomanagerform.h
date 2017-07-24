@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'audiomanagerform.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -110,18 +110,18 @@ public:
 
     void retranslateUi(QWidget *AudioManagerForm)
     {
-        AudioManagerForm->setWindowTitle(QApplication::translate("AudioManagerForm", "Add Audio", 0));
-        label->setText(QApplication::translate("AudioManagerForm", "Musice/Audio", 0));
-        groupBox->setTitle(QApplication::translate("AudioManagerForm", "Effects", 0));
-        FadeInChkBox->setText(QApplication::translate("AudioManagerForm", "FadeIn", 0));
-        FadeoutChkBox->setText(QApplication::translate("AudioManagerForm", "FadeOut", 0));
-        label_2->setText(QApplication::translate("AudioManagerForm", "s", 0));
-        label_3->setText(QApplication::translate("AudioManagerForm", "s", 0));
-        LoopChkBox->setText(QApplication::translate("AudioManagerForm", "LoopMusic", 0));
-        AddMusicStepPBtn->setText(QApplication::translate("AudioManagerForm", "AddMusicStep", 0));
-        QueueMusiccheckBox->setText(QApplication::translate("AudioManagerForm", "AddToQueue", 0));
-        pushButton->setText(QApplication::translate("AudioManagerForm", "QueMusic", 0));
-        AddMusicPushButton->setText(QApplication::translate("AudioManagerForm", "AddMoreMusic", 0));
+        AudioManagerForm->setWindowTitle(QApplication::translate("AudioManagerForm", "Add Audio", Q_NULLPTR));
+        label->setText(QApplication::translate("AudioManagerForm", "Musice/Audio", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("AudioManagerForm", "Effects", Q_NULLPTR));
+        FadeInChkBox->setText(QApplication::translate("AudioManagerForm", "FadeIn", Q_NULLPTR));
+        FadeoutChkBox->setText(QApplication::translate("AudioManagerForm", "FadeOut", Q_NULLPTR));
+        label_2->setText(QApplication::translate("AudioManagerForm", "s", Q_NULLPTR));
+        label_3->setText(QApplication::translate("AudioManagerForm", "s", Q_NULLPTR));
+        LoopChkBox->setText(QApplication::translate("AudioManagerForm", "LoopMusic", Q_NULLPTR));
+        AddMusicStepPBtn->setText(QApplication::translate("AudioManagerForm", "AddMusicStep", Q_NULLPTR));
+        QueueMusiccheckBox->setText(QApplication::translate("AudioManagerForm", "AddToQueue", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("AudioManagerForm", "QueMusic", Q_NULLPTR));
+        AddMusicPushButton->setText(QApplication::translate("AudioManagerForm", "AddMoreMusic", Q_NULLPTR));
     } // retranslateUi
 
 };

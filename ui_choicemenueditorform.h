@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'choicemenueditorform.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -92,17 +92,17 @@ public:
 
     void retranslateUi(QWidget *ChoiceMenuEditorForm)
     {
-        ChoiceMenuEditorForm->setWindowTitle(QApplication::translate("ChoiceMenuEditorForm", "Form", 0));
+        ChoiceMenuEditorForm->setWindowTitle(QApplication::translate("ChoiceMenuEditorForm", "Form", Q_NULLPTR));
         lineEditMenuItem->setText(QString());
-        checkBoxJump->setText(QApplication::translate("ChoiceMenuEditorForm", "JumpTo", 0));
-        checkBoxSetVar->setText(QApplication::translate("ChoiceMenuEditorForm", "Set Variable", 0));
-        label->setText(QApplication::translate("ChoiceMenuEditorForm", "Menu Item:", 0));
-        pushButtonAddOption->setText(QApplication::translate("ChoiceMenuEditorForm", "AddMenuItem>>", 0));
-        pushButtonDelOption->setText(QApplication::translate("ChoiceMenuEditorForm", "<<RemoveMenuItem", 0));
-        pushButtonFinished->setText(QApplication::translate("ChoiceMenuEditorForm", "Finished", 0));
-        pushButtonCancel->setText(QApplication::translate("ChoiceMenuEditorForm", "Cancel", 0));
+        checkBoxJump->setText(QApplication::translate("ChoiceMenuEditorForm", "JumpTo", Q_NULLPTR));
+        checkBoxSetVar->setText(QApplication::translate("ChoiceMenuEditorForm", "Set Variable", Q_NULLPTR));
+        label->setText(QApplication::translate("ChoiceMenuEditorForm", "Menu Item:", Q_NULLPTR));
+        pushButtonAddOption->setText(QApplication::translate("ChoiceMenuEditorForm", "AddMenuItem>>", Q_NULLPTR));
+        pushButtonDelOption->setText(QApplication::translate("ChoiceMenuEditorForm", "<<RemoveMenuItem", Q_NULLPTR));
+        pushButtonFinished->setText(QApplication::translate("ChoiceMenuEditorForm", "Finished", Q_NULLPTR));
+        pushButtonCancel->setText(QApplication::translate("ChoiceMenuEditorForm", "Cancel", Q_NULLPTR));
         lineEditDialog->setText(QString());
-        checkBoxDialog->setText(QApplication::translate("ChoiceMenuEditorForm", "Add Dialog", 0));
+        checkBoxDialog->setText(QApplication::translate("ChoiceMenuEditorForm", "Add Dialog", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'videomanager.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -82,13 +82,13 @@ public:
 
     void retranslateUi(QWidget *VideoManager)
     {
-        VideoManager->setWindowTitle(QApplication::translate("VideoManager", "Add Video", 0));
-        addVideoStepBtn->setText(QApplication::translate("VideoManager", "AddVideoStep", 0));
-        groupBox->setTitle(QApplication::translate("VideoManager", "GroupBox", 0));
-        ImageRdBox->setText(QApplication::translate("VideoManager", "AsImage", 0));
-        FullScreenRdBox->setText(QApplication::translate("VideoManager", "FullScreen", 0));
-        addVideoBtn->setText(QApplication::translate("VideoManager", "AddVideo", 0));
-        removeVideoBtn->setText(QApplication::translate("VideoManager", "RemoveVideo", 0));
+        VideoManager->setWindowTitle(QApplication::translate("VideoManager", "Add Video", Q_NULLPTR));
+        addVideoStepBtn->setText(QApplication::translate("VideoManager", "AddVideoStep", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("VideoManager", "GroupBox", Q_NULLPTR));
+        ImageRdBox->setText(QApplication::translate("VideoManager", "AsImage", Q_NULLPTR));
+        FullScreenRdBox->setText(QApplication::translate("VideoManager", "FullScreen", Q_NULLPTR));
+        addVideoBtn->setText(QApplication::translate("VideoManager", "AddVideo", Q_NULLPTR));
+        removeVideoBtn->setText(QApplication::translate("VideoManager", "RemoveVideo", Q_NULLPTR));
     } // retranslateUi
 
 };

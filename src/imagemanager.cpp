@@ -26,12 +26,12 @@ ImageManager::ImageManager(QWidget *parent) : QWidget(parent)
 	this->setWindowFlags(Qt::Dialog);
 	this->setWindowModality(Qt::WindowModal);
 	this->setupUi(this); 
-    effects = { "None", "fade", "dissolve", "pixellate", "move", "moveinright", "moveoutright", "ease", \
-        "zoomin", "zoomout", "zoominout", "vpunch", "hpunch", "blinds", "squares", "wipeleft", "slideleft", "slideawayleft", "irisin" };
+	effects =  QStringList({ "None", "fade", "dissolve", "pixellate", "move", "moveinright", "moveoutright", "ease", \
+		"zoomin", "zoomout", "zoominout", "vpunch", "hpunch", "blinds", "squares", "wipeleft", "slideleft", "slideawayleft", "irisin" });
 
-    ATLs = { "None", "pause", "linear", "ease", "easein", "pos", "xpos", "ypos", "anchor", "xanchor", "yanchor", "align", "xalign", \
+	ATLs =  QStringList({ "None", "pause", "linear", "ease", "easein", "pos", "xpos", "ypos", "anchor", "xanchor", "yanchor", "align", "xalign", \
         "yalign", "xoffset", "yoffset", "xcenter", "ycenter", "rotate", "rotate_pad", "transform_anchor", "zoom", "xzoom", "yzoom", "nearest", "alpha", \
-        "additive", "around", "alignaround", "angle", "radius", "crop", "crop_relative", "corner1", "corner2", "size", "subpixel", "delay", "events" };
+		"additive", "around", "alignaround", "angle", "radius", "crop", "crop_relative", "corner1", "corner2", "size", "subpixel", "delay", "events" });
     this->setWindowTitle("Revised - " + tr("Image Manager"));
     this->setWindowIcon(QIcon::fromTheme("folder-image"));
     this->setWindowFlags(Qt::Dialog);
